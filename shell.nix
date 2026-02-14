@@ -1,2 +1,0 @@
-
-(builtins.getFlake (toString ./.)).outputs.packages.x86_64-linux.linux

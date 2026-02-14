@@ -1,0 +1,33 @@
+{
+  "auto_install_extensions": {
+    "nix": true,
+    "rust": true,
+    "clangd": true,
+    "cpptools": true,
+    "python": true,
+    "shell": true,
+    "dockerfile": true,
+    "toml": true,
+    "json": true,
+    "yaml": true,
+    "markdown": true,
+    "vim": true,
+    "lua": true,
+    "github": true,
+    "git": true
+  },
+  "theme": {
+    "mode": "system",
+    "light": "One Light",
+    "dark": "One Dark"
+  },
+  "buffer_font_family": "Fira Code",
+  "buffer_font_features": {
+    "calt": true,
+    "liga": true
+  },
+  "terminal": {
+    "font_family": "Fira Code"
+  },
+  "vim_mode": true
+}

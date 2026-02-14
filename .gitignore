@@ -1,0 +1,8 @@
+.direnv
+.vscode
+result
+result-man
+system.raw
+*.log
+tmp
+TODO
