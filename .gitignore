@@ -1,0 +1,6 @@
+.vscode
+.cache
+.direnv
+.envrc
+build
+.directory
