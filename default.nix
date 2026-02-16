@@ -54,12 +54,15 @@ stdenv.mkDerivation {
   preferLocalBuild = true;
   WINDOWS = stdenv.targetPlatform.isWindows;
   cmakeFlags = CMAKE_FLAGS;
+
+  preConfigure = ''
+  pwd
+  ls -lh Engine Editor Runtime
+  '';
+
 #$(PKG_CONFIG)
   shellHook = ''
-  
-  echo buildInputs: $buildInputs
-  echo nativebuildInputs: $nativeBuildInputs
-  jq -n --arg args "$NIX_CFLAGS_COMPILE" --arg includes "$buildInputs" --arg cc "$(which $CC)" '{ "configurations": [{ "name": "Linux", "compilerArgs": $args | split(" "), "includePath": $includes | split(" "), "compilerPath": $cc, "cStandard": "c17", "cppStandard": "c++20" }], "version": 4 }' > .vscode/c_cpp_properties.json
+    jq -n --arg args "$NIX_CFLAGS_COMPILE" --arg includes "$buildInputs" --arg cc "$(which $CC)" '{ "configurations": [{ "name": "Linux", "compilerArgs": $args | split(" "), "includePath": $includes | split(" "), "compilerPath": $cc, "cStandard": "c17", "cppStandard": "c++20" }], "version": 4 }' > .vscode/c_cpp_properties.json
   '';
 
 }

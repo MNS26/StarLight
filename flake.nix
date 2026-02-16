@@ -1,10 +1,11 @@
 {
-  description = "";  
+  description = "";
+  inputs.self.submodules = true;
   outputs = { self, nixpkgs }:
   let
 
 
-    os = nixpkgs.legacyPackages.x86_64-linux.callPackage ./all.nix {};
+    os = nixpkgs.legacyPackages.x86_64-linux.callPackage ./os.nix { inherit self; };
 
   
   in
