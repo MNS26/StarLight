@@ -26,10 +26,13 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|CLang")
   target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic)
   if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     target_compile_options(${PROJECT_NAME} PRIVATE -g -O0)
-  else()
-    target_compile_definitions(${PROJECT_NAME} PRIVATE -DDISABLE_DEBUG)
   endif()
 endif()
+
+if (NOT CMAKE_BUILD_TYPE MATCHES "Debug|RelWithDebug")
+  target_compile_definitions(${PROJECT_NAME} PRIVATE -DDISABLE_DEBUG)
+  message(STATUS "Building Release version, disabling DEBUG and TRACE debug levels")
+endif ()
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
   ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Output/lib
@@ -44,7 +47,7 @@ target_sources(${PROJECT_NAME} PRIVATE ${STARLIGHT_SOURCES})
 #target_link_libraries(${PROJECT_NAME} PUBLIC glm)
 #target_link_libraries(${PROJECT_NAME} PRIVATE uuid)
 target_link_libraries(${PROJECT_NAME} PUBLIC ${SDL3_LIBRARIES})
-#target_link_libraries(${PROJECT_NAME} PUBLIC ${Vulkan_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} PUBLIC ${Vulkan_LIBRARIES})
 #target_link_libraries(${PROJECT_NAME} PRIVATE vk-bootstrap::vk-bootstrap)
 
 

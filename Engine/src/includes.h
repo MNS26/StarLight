@@ -1,4 +1,5 @@
 #pragma once
+#include "defines.h"
 #if defined(PLATFORM_WINDOWS)
 // C
 #include <stdlib.h>

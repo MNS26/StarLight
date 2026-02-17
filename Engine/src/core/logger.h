@@ -39,7 +39,7 @@ public:
   b8 initialize_logger();
   void shutdown_logger();
 
-  SAPI void log_output(log_level level, std::string message);
+  SLAPI void log_output(log_level level, std::string message);
 
 };
 

@@ -1,6 +1,5 @@
 #include "platform.h"
-#include "defines.h"
-#include "includes.h"
+
 // if we are on linux
 #ifdef PLATFORM_LINUX
 
@@ -45,7 +44,7 @@ b8 platformStartup( platformState* platformState, std::string applicationName, s
 }
 
 void platformShutdown(platformState* platformState) {
-
+  (void) platformState;
 }
 
 b8 platformHandleEvents(platformState* platformState, SDL_Event* event) {
@@ -110,12 +109,12 @@ b8 platformHandleEvents(platformState* platformState, SDL_Event* event) {
   return FALSE;
 }
 
-void* platformAllocate(u64 size, b8 aligned) {
-  return malloc(size);
-}
-void platformFree(void* block, b8 aligned) {
-  free(block);
-}
+//void* platformAllocate(u64 size, b8 aligned) {
+//  return malloc(size);
+//}
+//void platformFree(void* block, b8 aligned) {
+//  free(block);
+//}
 void* platformZeroMemory(void* block, u64 size) {
   return memset(block, 0, size);
 }
@@ -153,10 +152,10 @@ f64 platformGetAbsoluteTime() {
   return now.tv_sec + now.tv_nsec* 0.000000001;
 }
 
-void platormSleepms(u64 miliseconds) {
+void platormSleepMs(u64 miliseconds) {
   usleep(1000*miliseconds);
 }
-void platormSleepus(u64 microseconds) {
+void platormSleepUs(u64 microseconds) {
   usleep(microseconds);
 }
 #endif

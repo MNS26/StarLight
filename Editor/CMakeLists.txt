@@ -4,7 +4,7 @@ add_executable(${PROJECT_NAME})
 file(GLOB_RECURSE EDITOR_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
 target_sources(${PROJECT_NAME} PRIVATE ${EDITOR_SOURCES})
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
-target_link_libraries(${PROJECT_NAME} PUBLIC StarlightEngine)
+target_link_libraries(${PROJECT_NAME} PUBLIC StarLightEngine)
 
 # Compiler flags
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|CLang")
@@ -16,12 +16,14 @@ endif()
 
 add_dependencies(${PROJECT_NAME} StarLightRuntime)
 set_target_properties(${PROJECT_NAME} PROPERTIES
-#    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/$<CONFIG>/editor
-  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Output/$<CONFIG>
+#  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/$<CONFIG>/editor
+#  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Output/$<CONFIG>
+  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${PLATFORM}/$<CONFIG>
 )
 # Install Step
 install(TARGETS ${PROJECT_NAME} # executable
     RUNTIME DESTINATION .
 )
-install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/res/ # resources
-        DESTINATION editor_res)
+
+#install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/res/ # resources
+#        DESTINATION editor_res)

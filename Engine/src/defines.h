@@ -1,5 +1,6 @@
 #pragma once
 
+
 // unsigned int types
 typedef unsigned char u8;
 typedef unsigned short u16;
@@ -56,7 +57,7 @@ STATIC_ASSERT(sizeof(b64) == 8, "Expected b64 to be 8 bytes!");
 
 // WINDOWS
 #if defined(WIN32)||defined(_WIN32)||defined(__WIN32__)
-#define PLATFORM_WIN32
+#define PLATFORM_WINDOWS
 #ifndef _WIN64
 #error "Requires 64 bit machine"
 #endif
@@ -87,16 +88,16 @@ STATIC_ASSERT(sizeof(b64) == 8, "Expected b64 to be 8 bytes!");
 #ifdef SLEXPORT
 // Exporting
 #ifdef _MSC_VER
-#define SAPI __declspec(dllexport) // windows
+#define SALPI __declspec(dllexport) // windows
 #else
-#define SAPI __attribute__((visibility("default"))) // others
+#define SLAPI __attribute__((visibility("default"))) // others
 #endif
 #else
 // Importing
 #ifdef _MSC_VER
-#define SAPI __declspec(dllimport) // windows
+#define SLAPI __declspec(dllimport) // windows
 #else
-#define SAPI // stub
+#define SLAPI // stub
 #endif
 #endif
 #include "defines.h"

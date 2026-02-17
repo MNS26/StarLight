@@ -23,15 +23,15 @@ typedef struct platformState {
   void* internalState;
 } platformState;
 
-SAPI b8 platformStartup( platformState* platformState, std::string applicationName, s32 x, s32 y, s32 width, s32 height);
+SLAPI b8 platformStartup( platformState* platformState, std::string applicationName, s32 x, s32 y, s32 width, s32 height);
 
-SAPI void platformShutdown(platformState* platformState);
+SLAPI void platformShutdown(platformState* platformState);
 
 // return TRUE if consumed, otherwise pass on
-SAPI b8 platformHandleEvents(platformState* platformState, SDL_Event* event);
+SLAPI b8 platformHandleEvents(platformState* platformState, SDL_Event* event);
 
-void* platformAllocate(u64 size, b8 aligned);
-void platformFree(void* block, b8 aligned);
+//void* platformAllocate(u64 size, b8 aligned);
+//void platformFree(void* block, b8 aligned);
 void* platformZeroMemory(void* block, u64 size);
 void* platformCopyMemory(void* dst, const void* src, u64 size);
 void* platformSetMemory(void* dst, s32 val, u64 size);
@@ -44,5 +44,5 @@ void* platformSetMemory(void* dst, s32 val, u64 size);
 
 f64 platformGetAbsoluteTime();
 
-void platormSleepms(u64 miliseconds);
-void platormSleepus(u64 microseconds);
+void platormSleepMs(u64 miliseconds);
+void platormSleepUs(u64 microseconds);
