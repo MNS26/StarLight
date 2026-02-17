@@ -23,12 +23,11 @@ typedef struct platformState {
   void* internalState;
 } platformState;
 
-SLAPI b8 platformStartup( platformState* platformState, std::string applicationName, s32 x, s32 y, s32 width, s32 height);
+b8 platformStartup( platformState* platformState, std::string *applicationName, s32 x, s32 y, s32 width, s32 height);
 
-SLAPI void platformShutdown(platformState* platformState);
+void platformShutdown(platformState* platformState);
 
-// return TRUE if consumed, otherwise pass on
-SLAPI b8 platformHandleEvents(platformState* platformState, SDL_Event* event);
+b8 platformHandleEvents(platformState* platformState, SDL_Event* event);
 
 //void* platformAllocate(u64 size, b8 aligned);
 //void platformFree(void* block, b8 aligned);

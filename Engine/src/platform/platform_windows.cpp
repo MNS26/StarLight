@@ -21,7 +21,7 @@ typedef struct internalState {
 static f64 clockFrequency;
 static LARGE_INTEGER startTime;
 
-b8 platformStartup( platformState* platformState, std::string applicationName, s32 x/*unused*/, s32 y/*unused*/, s32 width, s32 height) {
+b8 platformStartup( platformState *platformState, std::string *applicationName, s32 x/*unused*/, s32 y/*unused*/, s32 width, s32 height) {
   (void)x;
   (void)y;
 
@@ -34,7 +34,7 @@ b8 platformStartup( platformState* platformState, std::string applicationName, s
     return FALSE;
   }
 
-  state->Window = SDL_CreateWindow(applicationName.c_str(), width, height, SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE );
+  state->Window = SDL_CreateWindow(applicationName->c_str(), width, height, SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE );
 
   if(!state->Window) {
     CRITICAL("Failed to create window: {}",SDL_GetError());

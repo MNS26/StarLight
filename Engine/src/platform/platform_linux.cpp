@@ -20,7 +20,7 @@ typedef struct internalState {
 } internalState;
 
 
-b8 platformStartup( platformState* platformState, std::string applicationName, s32 x/*unused*/, s32 y/*unused*/, s32 width, s32 height) {
+b8 platformStartup( platformState* platformState, std::string* applicationName, s32 x/*unused*/, s32 y/*unused*/, s32 width, s32 height) {
   (void)x;
   (void)y;
 
@@ -33,7 +33,7 @@ b8 platformStartup( platformState* platformState, std::string applicationName, s
     return FALSE;
   }
 
-  state->Window = SDL_CreateWindow(applicationName.c_str(), width, height, SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE );
+  state->Window = SDL_CreateWindow(applicationName->c_str(), width, height, SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE );
 
   if(!state->Window) {
     CRITICAL("Failed to create window: {}",SDL_GetError());
@@ -58,7 +58,7 @@ b8 platformHandleEvents(platformState* platformState, SDL_Event* event) {
       SDL_QuitSubSystem(SDL_INIT_VIDEO);
       SDL_DestroyWindow(state->Window);
       platformState->running = false;
-      return FALSE; // always let it pass through to the rest
+      return FALSE;
 
       //std::cout << "Event: " << SDL_WindowEventToString(event.window) << std::endl;
       //std::cout << "  \\- TimeStamp: " << (int)event.window.timestamp << std::endl;
