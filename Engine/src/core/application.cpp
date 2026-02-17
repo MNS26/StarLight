@@ -1,8 +1,8 @@
 #include "defines.h"
 #include "includes.h"
 
-#include <core/logger.h>
-#include <core/asserts.h>
+#include "logger.h"
+#include "asserts.h"
 
 #include <platform/platform.h>
 #include <SDL3/SDL.h>
