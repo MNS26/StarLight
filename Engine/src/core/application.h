@@ -1,4 +1,8 @@
 #pragma once
+#include "defines.h"
+#include "includes.h"
+
+struct game;
 
 //Application Config
 typedef struct applicationConfig {
@@ -14,7 +18,7 @@ typedef struct applicationConfig {
   std::string name;
 } applicationConfig;
 
-SLAPI b8 applicationCreate(applicationConfig* condfig);
+SLAPI b8 applicationCreate(struct game* gameInstance);
 
 SLAPI b8 applicationRun();
 

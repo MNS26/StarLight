@@ -1,10 +1,6 @@
 #pragma once
 
-#include "defines.h"
-#include "includes.h"
 #include <SDL3/SDL.h>
-
-
 
 typedef enum LOGLEVEL {
     LOG_LEVEL_TRACE,
@@ -29,8 +25,8 @@ void platformShutdown(platformState* platformState);
 
 b8 platformHandleEvents(platformState* platformState, SDL_Event* event);
 
-//void* platformAllocate(u64 size, b8 aligned);
-//void platformFree(void* block, b8 aligned);
+SLAPI void* platformAllocate(u64 size, b8 aligned);
+SLAPI void platformFree(void* block, b8 aligned);
 void* platformZeroMemory(void* block, u64 size);
 void* platformCopyMemory(void* dst, const void* src, u64 size);
 void* platformSetMemory(void* dst, s32 val, u64 size);

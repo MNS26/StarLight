@@ -11,12 +11,6 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|CLang")
   endif()
 endif()
 
-#Platform check
-if(NOT PLATFORM)
-  message(STATUS "PLATFORM is not set! using \"Linux\" by default")
-  set(PLATFORM "Linux")
-endif()
-
 ## ================== ##
 ## Global C++ Options ##
 ## ================== ##

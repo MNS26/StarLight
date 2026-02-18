@@ -24,7 +24,7 @@ add_library(${PROJECT_NAME} STATIC)
 # Compiler flags
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|CLang")
   target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic)
-  if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+  if(CMAKE_BUILD_TYPE MATCHES "Debug|RelWithDebug")
     target_compile_options(${PROJECT_NAME} PRIVATE -g -O0)
   endif()
 endif()

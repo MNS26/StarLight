@@ -1,8 +1,9 @@
+#include "defines.h"
+// if we are on Windows
+#ifdef PLATFORM_WINDOWS
+
+#include "includes.h"
 #include "platform.h"
-
-// if we are on linux
-#ifdef PLATFORM_LINUX
-
 #include "core/logger.h"
 #include "core/asserts.h"
 #include <sys/time.h>
@@ -13,14 +14,16 @@
 #include <spdlog/logger.h>
 #include "spdlog/sinks/stdout_color_sinks.h"
 
-
 typedef struct internalState {
   SDL_Window* Window;
-
 } internalState;
 
 
-b8 platformStartup( platformState* platformState, std::string* applicationName, s32 x/*unused*/, s32 y/*unused*/, s32 width, s32 height) {
+//STATIC
+static f64 clockFrequency;
+static LARGE_INTEGER startTime;
+
+b8 platformStartup( platformState *platformState, std::string *applicationName, s32 x/*unused*/, s32 y/*unused*/, s32 width, s32 height) {
   (void)x;
   (void)y;
 
@@ -37,11 +40,17 @@ b8 platformStartup( platformState* platformState, std::string* applicationName, 
 
   if(!state->Window) {
     CRITICAL("Failed to create window: {}",SDL_GetError());
-    return FALSE
+    return FALSE;
   }
 
+  //clock setup
+  LARGE_INTEGER frequency;
+  QueryPerformanceFrequency(&frequency);
+  clockFrequency = 1.0/(f64)frequency.QuadPart;
+  QueryPerformanceCounter(&startTime);
   return TRUE;
 }
+
 
 void platformShutdown(platformState* platformState) {
   (void) platformState;
@@ -58,7 +67,7 @@ b8 platformHandleEvents(platformState* platformState, SDL_Event* event) {
       SDL_QuitSubSystem(SDL_INIT_VIDEO);
       SDL_DestroyWindow(state->Window);
       platformState->running = false;
-      return FALSE;
+      return FALSE; // always let it pass through to the rest
 
       //std::cout << "Event: " << SDL_WindowEventToString(event.window) << std::endl;
       //std::cout << "  \\- TimeStamp: " << (int)event.window.timestamp << std::endl;
@@ -89,10 +98,10 @@ b8 platformHandleEvents(platformState* platformState, SDL_Event* event) {
       return TRUE;
 
     case SDL_EVENT_WINDOW_MOUSE_ENTER:
-      return FALSE;
+      return TRUE;
 
     case SDL_EVENT_WINDOW_MOUSE_LEAVE:
-      return FALSE;
+      return TRUE;
 
     case SDL_EVENT_KEY_DOWN:
       if (event->key.key == SDLK_Q) {
@@ -103,18 +112,18 @@ b8 platformHandleEvents(platformState* platformState, SDL_Event* event) {
       return TRUE;
 
     default:
-      return FALSE;
+      return TRUE;
   }
 
   return FALSE;
 }
 
-//void* platformAllocate(u64 size, b8 aligned) {
-//  return malloc(size);
-//}
-//void platformFree(void* block, b8 aligned) {
-//  free(block);
-//}
+void* platformAllocate(u64 size, b8 aligned) {
+  return malloc(size);
+}
+void platformFree(void* block, b8 aligned) {
+  free(block);
+}
 void* platformZeroMemory(void* block, u64 size) {
   return memset(block, 0, size);
 }
@@ -124,6 +133,7 @@ void* platformCopyMemory(void* dst, const void* src, u64 size) {
 void* platformSetMemory(void* dst, s32 val, u64 size) {
   return memset(dst, val, size);
 }
+
 
 // FIXME: I HATE THIS BUT I DONT KNOW ANOTHER SANE WAY
 //void platformConsoleWrite(u8 level, const char* message, ...) {
@@ -147,9 +157,9 @@ void* platformSetMemory(void* dst, s32 val, u64 size) {
 
 
 f64 platformGetAbsoluteTime() {
-  struct timespec now;
-  clock_gettime(CLOCK_REALTIME,&now);
-  return now.tv_sec + now.tv_nsec* 0.000000001;
+  LARGE_INTEGER nowTime;
+  QueryPerformanceCounter(&nowTime);
+  return (f64)nowTime.QuadPart * clockFrequency;
 }
 
 void platormSleepMs(u64 miliseconds) {

@@ -50,8 +50,8 @@ STATIC_ASSERT(sizeof(b16) == 2, "Expected b16 to be 2 bytes!");
 STATIC_ASSERT(sizeof(b32) == 4, "Expected b32 to be 4 bytes!");
 STATIC_ASSERT(sizeof(b64) == 8, "Expected b64 to be 8 bytes!");
 
-#define TRUE 1;
-#define FALSE 0;
+#define TRUE 1
+#define FALSE 0
 
 //some platform detection
 
