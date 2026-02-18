@@ -32,14 +32,14 @@ b8 platformStartup( platformState *platformState, std::string *applicationName, 
   internalState* state = (internalState*)platformState->internalState;
 
   if(!SDL_InitSubSystem(SDL_INIT_VIDEO)) {
-    CRITICAL("Failed to initialize sdl3: {}",SDL_GetError());
+    platformState->logger.CRITICAL("Failed to initialize sdl3: {}",SDL_GetError());
     return FALSE;
   }
 
   state->Window = SDL_CreateWindow(applicationName->c_str(), width, height, SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE );
 
   if(!state->Window) {
-    CRITICAL("Failed to create window: {}",SDL_GetError());
+    platformState->logger.CRITICAL("Failed to create window: {}",SDL_GetError());
     return FALSE;
   }
 
@@ -119,9 +119,11 @@ b8 platformHandleEvents(platformState* platformState, SDL_Event* event) {
 }
 
 void* platformAllocate(u64 size, b8 aligned) {
+  (void)aligned;
   return malloc(size);
 }
 void platformFree(void* block, b8 aligned) {
+  (void)aligned;
   free(block);
 }
 void* platformZeroMemory(void* block, u64 size) {
@@ -133,28 +135,6 @@ void* platformCopyMemory(void* dst, const void* src, u64 size) {
 void* platformSetMemory(void* dst, s32 val, u64 size) {
   return memset(dst, val, size);
 }
-
-
-// FIXME: I HATE THIS BUT I DONT KNOW ANOTHER SANE WAY
-//void platformConsoleWrite(u8 level, const char* message, ...) {
-//  char out[UINT64_MAX];
-//  memset(out, 0, sizeof(out);
-//  __builtin_va_list arg_ptr;
-//  va_start(arg_ptr,message);
-//  vsnprintf(out,sizeof(out)/sizeof(out[0]), message, arg_ptr);
-//  va_end(args_ptr);
-//  logger.log_output(level, std::string(out));
-//}
-//void platformConsoleWriteError(const char* message, ...) {
-//  char out[UINT64_MAX];
-//  memset(out, 0, sizeof(out);
-//  __builtin_va_list arg_ptr;
-//  va_start(arg_ptr,message);
-//  vsnprintf(out,sizeof(out)/sizeof(out[0]), message, arg_ptr);
-//  va_end(args_ptr);
-//  logger.log_output(4, std::string(out));
-//}
-
 
 f64 platformGetAbsoluteTime() {
   LARGE_INTEGER nowTime;

@@ -100,4 +100,4 @@ STATIC_ASSERT(sizeof(b64) == 8, "Expected b64 to be 8 bytes!");
 #define SLAPI // stub
 #endif
 #endif
-#include "defines.h"
+//#include "defines.h"

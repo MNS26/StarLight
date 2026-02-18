@@ -1,6 +1,7 @@
 #pragma once
 
-#include "defines.h"
+#include <defines.h>
+#include <includes.h>
 #include <gameTypes.h>
 
 typedef struct gameState {

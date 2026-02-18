@@ -1,21 +1,11 @@
 #pragma once
-
+#include "core/logger.h"
 #include <SDL3/SDL.h>
 
-typedef enum LOGLEVEL {
-    LOG_LEVEL_TRACE,
-    LOG_LEVEL_DEBUG,
-    LOG_LEVEL_INFO,
-    LOG_LEVEL_WARN,
-    LOG_LEVEL_ERROR,
-    LOG_LEVEL_CRITICAL,
-    LOG_LEVEL_LOG,
-    LOG_LEVEL_MAX = LOG_LEVEL_LOG
-}LOGLEVEL;
-
-
+extern Logger* logger;
 typedef struct platformState {
   b8 running = FALSE;
+  Logger logger;
   void* internalState;
 } platformState;
 
@@ -25,16 +15,30 @@ void platformShutdown(platformState* platformState);
 
 b8 platformHandleEvents(platformState* platformState, SDL_Event* event);
 
-SLAPI void* platformAllocate(u64 size, b8 aligned);
-SLAPI void platformFree(void* block, b8 aligned);
+void* platformAllocate(u64 size, b8 aligned);
+void platformFree(void* block, b8 aligned);
 void* platformZeroMemory(void* block, u64 size);
 void* platformCopyMemory(void* dst, const void* src, u64 size);
 void* platformSetMemory(void* dst, s32 val, u64 size);
 
 // FIXME: im going isane if someone knows a better way PLEASE FIX THIS
-#define platformConsoleWrite(level, ...) logger.log_output(level, std::format(__VA_ARGS__))
-#define platformConsoleWriteError(...) logger.log_output(logger.LOG_LEVEL_ERROR, std::format(__VA_ARGS__))
-//void platformConsoleWrite(u8 level, const char* message, ...);
+//#define platformConsoleWrite(level, ...) logger.LOG(level, std::format(__VA_ARGS__))
+//#define platformConsoleWriteError(...) logger.ERROR(std::format(__VA_ARGS__))
+
+
+template <typename... Args>
+void platformConsoleWrite(Logger::LOG_LEVEL level, std::format_string<Args...> fmt, Args&&... args) {
+  std::string message = std::format(fmt, std::forward<Args>(args)...);
+  logger->log_output(level, message);
+}
+
+template <typename... Args>
+void platformConsoleWriteError(std::format_string<Args...> fmt, Args&&... args) {
+  std::string message = std::format(fmt, std::forward<Args>(args)...);
+  logger->log_output(logger->LOG_LEVEL_ERROR, message);
+}
+
+//void platformConsoleWrite(Logger::LOG_LEVEL level, const char* message, ...);
 //void platformConsoleWriteError(const char* message, ...);
 
 f64 platformGetAbsoluteTime();

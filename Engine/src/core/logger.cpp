@@ -8,7 +8,8 @@
 b8 Logger::initialize_logger() {
   // TODO: initialize spdlog
 
-  spdlog::set_level((spdlog::level::level_enum)(7-LOG_LEVEL_MAX-1));
+//  spdlog::set_level((spdlog::level::level_enum)((LOG_LEVEL_MAX-2)-sizeof(log_level)));
+  spdlog::set_level((spdlog::level::level_enum)0);
   spdlog::set_pattern("%^[%-8l] %v%$");
   //TODO: setup log file
   return TRUE;

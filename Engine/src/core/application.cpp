@@ -1,12 +1,13 @@
 
-#include "logger.h"
+#include "application.h"
 #include "asserts.h"
-#include "platform/platform.h"
 #include "gameTypes.h"
+#include "logger.h"
+
+#include "platform/platform.h"
+#include "core/memory.h"
 
 #include <SDL3/SDL.h>
-
-#include "application.h"
 
 typedef struct applicationState {
   game* gameInstance;
@@ -18,38 +19,36 @@ typedef struct applicationState {
   f64 firstTime;
 } applicationState;
 
-Logger logger;
+extern Memory memory;
 
 static b8 initialized = FALSE;
 static applicationState appState;
 
 b8 applicationCreate(game* gameInstance) {
+
   if (initialized) {
-    ERROR("applicationCreate called more than once.");
+    gameInstance->logger.ERROR("applicationCreate called more than once.");
     return FALSE;
   }
 
   appState.gameInstance = gameInstance;
+  appState.platform.logger = gameInstance->logger;
 
-  // Init subsystems
-  logger.initialize_logger();
-
-  CRITICAL("TEST {}", 0.1);
-  ERROR("TEST {}", 0.12);
-  WARNING("TEST {}", 0.123);
-  INFO("TEST {}", 0.1234);
-  DEBUG("TEST {}", 0.12345);
-  TRACE("TEST {}", 0.123456);
+  gameInstance->logger.CRITICAL("TEST {}", 0.1);
+  gameInstance->logger.ERROR("TEST {}", 0.12);
+  gameInstance->logger.WARNING("TEST {}", 0.123);
+  gameInstance->logger.INFO("TEST {}", 0.1234);
+  gameInstance->logger.DEBUG("TEST {}", 0.12345);
+  gameInstance->logger.TRACE("TEST {}", 0.123456);
   
-  platformConsoleWrite(logger.LOG_LEVEL_CRITICAL, "TEST platformConsoleWrite {} {} {}", 01, 2,3);
-  platformConsoleWrite(logger.LOG_LEVEL_ERROR, "TEST platformConsoleWrite {} {} {}", 01, 2,3);
-  platformConsoleWrite(logger.LOG_LEVEL_WARN, "TEST platformConsoleWrite {} {} {}", 01, 2,3);
-  platformConsoleWrite(logger.LOG_LEVEL_INFO, "TEST platformConsoleWrite {} {} {}", 01, 2,3);
-  platformConsoleWrite(logger.LOG_LEVEL_DEBUG, "TEST platformConsoleWrite {} {} {}", 01, 2,3);
-  platformConsoleWrite(logger.LOG_LEVEL_TRACE, "TEST platformConsoleWrite {} {} {}", 01, 2,3);
+  platformConsoleWrite(gameInstance->logger.LOG_LEVEL_CRITICAL, "TEST platformConsoleWrite {} {} {}", 01, 2,3);
+  platformConsoleWrite(gameInstance->logger.LOG_LEVEL_ERROR, "TEST platformConsoleWrite {} {} {}", 01, 2,3);
+  platformConsoleWrite(gameInstance->logger.LOG_LEVEL_WARN, "TEST platformConsoleWrite {} {} {}", 01, 2,3);
+  platformConsoleWrite(gameInstance->logger.LOG_LEVEL_INFO, "TEST platformConsoleWrite {} {} {}", 01, 2,3);
+  platformConsoleWrite(gameInstance->logger.LOG_LEVEL_DEBUG, "TEST platformConsoleWrite {} {} {}", 01, 2,3);
+  platformConsoleWrite(gameInstance->logger.LOG_LEVEL_TRACE, "TEST platformConsoleWrite {} {} {}", 01, 2,3);
 
   platformConsoleWriteError("TEST platformConsoleWriteError {} {} {}", 01, 2,3);
-
 
   appState.isRunning = TRUE;
   appState.isSuspended = FALSE;
@@ -65,7 +64,7 @@ b8 applicationCreate(game* gameInstance) {
 
   // Initialize the game
   if (!appState.gameInstance->initialize(appState.gameInstance)) {
-    CRITICAL("Game failed to intialize!");
+    gameInstance->logger.CRITICAL("Game failed to intialize!");
     return FALSE;
   }
 
@@ -75,8 +74,11 @@ b8 applicationCreate(game* gameInstance) {
 }
 
 b8 applicationRun() {
+  Logger logger = appState.platform.logger;
   SDL_Event event;
   SDL_zero(event);
+  //scuffed but shoud
+  logger.INFO("{}",memory.getMemoryUsageStr());
   while (appState.isRunning) {
     while (SDL_PollEvent(&event)) { 
       // add all the events in here
@@ -86,13 +88,13 @@ b8 applicationRun() {
       if (!appState.isSuspended) {
         // Update call
         if (!appState.gameInstance->update(appState.gameInstance, (f64)0)) {
-          CRITICAL("Game update failed, exiting!");
+          logger.CRITICAL("Game update failed, exiting!");
           appState.isRunning = FALSE;
           break;
         }
         // Render call
         if (!appState.gameInstance->render(appState.gameInstance, (f64)0)) {
-          CRITICAL("Game render failed, exiting!");
+          logger.CRITICAL("Game render failed, exiting!");
           appState.isRunning = FALSE;
           break;
         }
