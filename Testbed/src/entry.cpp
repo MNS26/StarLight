@@ -13,7 +13,6 @@ b8 createGame(game* game) {
   game->update = gameUpdate;
   game->render = gameRender;
   game->onResize = gameOnResize;
-
   game->state = platformAllocate(sizeof(gameState), FALSE);
 
   return TRUE;
