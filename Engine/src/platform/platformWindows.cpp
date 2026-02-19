@@ -32,14 +32,14 @@ b8 platformStartup( platformState *platformState, std::string *applicationName, 
   internalState* state = (internalState*)platformState->internalState;
 
   if(!SDL_InitSubSystem(SDL_INIT_VIDEO)) {
-    platformState->logger.CRITICAL("Failed to initialize sdl3: {}",SDL_GetError());
+    CRITICAL("Failed to initialize sdl3: {}",SDL_GetError());
     return FALSE;
   }
 
   state->Window = SDL_CreateWindow(applicationName->c_str(), width, height, SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE );
 
   if(!state->Window) {
-    platformState->logger.CRITICAL("Failed to create window: {}",SDL_GetError());
+    CRITICAL("Failed to create window: {}",SDL_GetError());
     return FALSE;
   }
 

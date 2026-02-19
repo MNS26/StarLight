@@ -2,8 +2,7 @@
 #include <entry.h>
 
 #include <core/memory.h>
-extern Memory memory;
-
+//extern Memory memory;
 b8 createGame(game* game) {  
   game->config.startPosX = -1;
   game->config.startPosY = -1;
@@ -14,7 +13,6 @@ b8 createGame(game* game) {
   game->update = gameUpdate;
   game->render = gameRender;
   game->onResize = gameOnResize;
-  game->state = memory.allocate(sizeof(gameState), memory.MEMORY_TAG_GAME);
-
+  game->state = SLallocate(sizeof(gameState), MEMORY_TAG_GAME);
   return TRUE;
 }

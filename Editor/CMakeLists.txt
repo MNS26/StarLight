@@ -1,4 +1,4 @@
-project(StarLightEditor VERSION 0.0.0 LANGUAGES CXX)
+project(StarLightEditor VERSION 0.0.0 LANGUAGES C CXX)
 
 add_executable(${PROJECT_NAME})
 file(GLOB_RECURSE EDITOR_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")

@@ -16,94 +16,91 @@
 #define LOG_TRACE_ENABLED 1
 #endif
 
-class Logger{
-public:
-  typedef enum LOG_LEVEL {
-    LOG_LEVEL_TRACE,
-    LOG_LEVEL_DEBUG,
-    LOG_LEVEL_USER,
-    LOG_LEVEL_INFO,
-    LOG_LEVEL_WARN,
-    LOG_LEVEL_ERROR,
-    LOG_LEVEL_CRITICAL,
+typedef enum LOG_LEVEL {
+  LOG_LEVEL_TRACE,
+  LOG_LEVEL_DEBUG,
+  LOG_LEVEL_USER,
+  LOG_LEVEL_INFO,
+  LOG_LEVEL_WARN,
+  LOG_LEVEL_ERROR,
+  LOG_LEVEL_CRITICAL,
 
-    LOG_LEVEL_MAX
-  } log_level;
+  LOG_LEVEL_MAX
+} log_level;
 
 
-  b8 initialize_logger();
-  void shutdown_logger();
-  template <typename... Args>
-  void LOG(LOG_LEVEL level, std::format_string<Args...> fmt, Args&&... args);
-  
-  template <typename... Args>
-  void CRITICAL(std::format_string<Args...> fmt, Args&&... args);
-  
-  template <typename... Args>
-  void ERROR(std::format_string<Args...> fmt, Args&&... args);
-  
-  template <typename... Args>
-  void WARNING(std::format_string<Args...> fmt, Args&&... args);
-  
-  template <typename... Args>
-  void INFO(std::format_string<Args...> fmt, Args&&... args);
-  
-  template <typename... Args>
-  void USER(std::format_string<Args...> fmt, Args&&... args);
-  
-  template <typename... Args>
-  void DEBUG(std::format_string<Args...> fmt, Args&&... args);
-  
-  template <typename... Args>
-  void TRACE(std::format_string<Args...> fmt, Args&&... args);
-  
-  void log_output(log_level level, std::string message);
-};
+b8 initialize_logger();
+void shutdown_logger();
+template <typename... Args>
+void LOG(LOG_LEVEL level, std::format_string<Args...> fmt, Args&&... args);
 
 template <typename... Args>
-inline void Logger::LOG(LOG_LEVEL level, std::format_string<Args...> fmt, Args &&...args) {
+void CRITICAL(std::format_string<Args...> fmt, Args&&... args);
+
+template <typename... Args>
+void ERROR(std::format_string<Args...> fmt, Args&&... args);
+
+template <typename... Args>
+void WARNING(std::format_string<Args...> fmt, Args&&... args);
+
+template <typename... Args>
+void INFO(std::format_string<Args...> fmt, Args&&... args);
+
+template <typename... Args>
+void USER(std::format_string<Args...> fmt, Args&&... args);
+
+template <typename... Args>
+void DEBUG(std::format_string<Args...> fmt, Args&&... args);
+
+template <typename... Args>
+void TRACE(std::format_string<Args...> fmt, Args&&... args);
+
+void log_output(log_level level, std::string message);
+
+template <typename... Args>
+inline void LOG(LOG_LEVEL level, std::format_string<Args...> fmt, Args &&...args) {
   std::string message = std::format(fmt, std::forward<Args>(args)...);
   log_output(level, message);
 }
 
 template <typename... Args>
-inline void Logger::CRITICAL(std::format_string<Args...> fmt, Args &&...args) {
+inline void CRITICAL(std::format_string<Args...> fmt, Args &&...args) {
   std::string message = std::format(fmt, std::forward<Args>(args)...);
   log_output(LOG_LEVEL_CRITICAL, message);
 }
 
 template <typename... Args>
-inline void Logger::ERROR(std::format_string<Args...> fmt, Args &&...args) {
+inline void ERROR(std::format_string<Args...> fmt, Args &&...args) {
   std::string message = std::format(fmt, std::forward<Args>(args)...);
   log_output(LOG_LEVEL_ERROR, message);
 }
 
 template <typename... Args>
-inline void Logger::WARNING(std::format_string<Args...> fmt, Args &&...args) {
+inline void WARNING(std::format_string<Args...> fmt, Args &&...args) {
   std::string message = std::format(fmt, std::forward<Args>(args)...);
   log_output(LOG_LEVEL_WARN, message);
 }
 
 template <typename... Args>
-inline void Logger::INFO(std::format_string<Args...> fmt, Args &&...args) {
+inline void INFO(std::format_string<Args...> fmt, Args &&...args) {
   std::string message = std::format(fmt, std::forward<Args>(args)...);
   log_output(LOG_LEVEL_INFO, message);
 }
 
 template <typename... Args>
-inline void Logger::USER(std::format_string<Args...> fmt, Args &&...args) {
+inline void USER(std::format_string<Args...> fmt, Args &&...args) {
   std::string message = std::format(fmt, std::forward<Args>(args)...);
   log_output(LOG_LEVEL_USER, message);
 }
 
 template <typename... Args>
-inline void Logger::DEBUG(std::format_string<Args...> fmt, Args &&...args) {
+inline void DEBUG(std::format_string<Args...> fmt, Args &&...args) {
   std::string message = std::format(fmt, std::forward<Args>(args)...);
   log_output(LOG_LEVEL_DEBUG, message);
 }
 
 template <typename... Args>
-inline void Logger::TRACE(std::format_string<Args...> fmt, Args &&...args) {
+inline void TRACE(std::format_string<Args...> fmt, Args &&...args) {
   std::string message = std::format(fmt, std::forward<Args>(args)...);
   log_output(LOG_LEVEL_TRACE, message);
 }

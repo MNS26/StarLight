@@ -5,7 +5,7 @@
 #include "spdlog/sinks/stdout_color_sinks.h"
 
 
-b8 Logger::initialize_logger() {
+b8 initialize_logger() {
   // TODO: initialize spdlog
 
 //  spdlog::set_level((spdlog::level::level_enum)((LOG_LEVEL_MAX-2)-sizeof(log_level)));
@@ -15,13 +15,13 @@ b8 Logger::initialize_logger() {
   return TRUE;
 }
 
-void Logger::shutdown_logger() {
+void shutdown_logger() {
   // TODO: write/close log file
   spdlog::shutdown();
 }
 
 
-SLAPI void Logger::log_output(log_level level, std::string message) {
+SLAPI void log_output(log_level level, std::string message) {
   switch (level)
   {
     case LOG_LEVEL_TRACE:

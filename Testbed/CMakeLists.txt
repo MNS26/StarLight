@@ -1,4 +1,4 @@
-project(StarLightTestbed VERSION 0.0.0 LANGUAGES CXX)
+project(StarLightTestbed VERSION 0.0.0 LANGUAGES C CXX)
 
 SET(CMAKE_FIND_LIBRARY_SUFFIXES "" ".so" ".so.1" ".dll" ".lib")
 find_package(PkgConfig REQUIRED)

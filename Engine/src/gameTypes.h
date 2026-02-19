@@ -1,13 +1,11 @@
 #pragma once
 #include "defines.h"
 #include "core/application.h"
-#include "core/logger.h"
+
 typedef struct game {
 
   // Game config
   applicationConfig config;
-  //logger
-  Logger logger;
   
   // Pointer to game initialization function
   b8 (*initialize)(struct game* gameInst);
@@ -20,4 +18,4 @@ typedef struct game {
   
   // General game state data
   void* state;
-}game;
+} game;

@@ -4,7 +4,6 @@
 #ifdef PLATFORM_LINUX
 #include "includes.h"
 #include "platform.h"
-
 #include "core/logger.h"
 #include "core/asserts.h"
 #include <sys/time.h>
@@ -27,17 +26,19 @@ b8 platformStartup( platformState* platformState, std::string* applicationName, 
 
   platformState->internalState = malloc(sizeof(internalState));
   memset(platformState->internalState, 0, sizeof(internalState));
+//  platformState->internalState = platformState->memory.allocate(sizeof(internalState),Memory::MEMORY_TAG_ENGINE);
+//  platformState->memory.memset(platformState->internalState, 0, sizeof(internalState));
   internalState* state = (internalState*)platformState->internalState;
 
   if(!SDL_InitSubSystem(SDL_INIT_VIDEO)) {
-    platformState->logger.CRITICAL("Failed to initialize sdl3: {}",SDL_GetError());
+    CRITICAL("Failed to initialize sdl3: {}",SDL_GetError());
     return FALSE;
   }
 
   state->Window = SDL_CreateWindow(applicationName->c_str(), width, height, SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE );
 
   if(!state->Window) {
-    platformState->logger.CRITICAL("Failed to create window: {}",SDL_GetError());
+    CRITICAL("Failed to create window: {}",SDL_GetError());
     return FALSE;
   }
 
