@@ -1,4 +1,4 @@
-project(StarLightRuntime LANGUAGES C CXX)
+project(StarLightRuntime LANGUAGES CXX)
 add_executable(${PROJECT_NAME})
 
 # Compiler flags

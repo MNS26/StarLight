@@ -4,7 +4,7 @@
 
 
 
-static std::string memoryTagStrigns[MEMORY_TAG_MAX] = {
+static std::string memory_tag_strigns[MEMORY_TAG_MAX] = {
   "UNKNOWN",
   "ARRAY",
   "DARRAY",
@@ -26,52 +26,52 @@ static std::string memoryTagStrigns[MEMORY_TAG_MAX] = {
 };
 
 struct memoryStats {
-  u64 totallAllocated;
-  u64 taggedAllocations[MEMORY_TAG_MAX];
+  u64 totall_allocated;
+  u64 tagged_allocations[MEMORY_TAG_MAX];
 };
 struct memoryStats stats;
 
-void memoryInitialize() {
-  platformZeroMemory(&stats, sizeof(stats));
+void memory_initialize() {
+  platform_zero_memory(&stats, sizeof(stats));
 }
-void memoryShutdown() {}
+void memory_shutdown() {}
 
-void *SLallocate(u64 size, memoryTag tag) {
+void *SLallocate(u64 size, memory_tag tag) {
   if (tag == MEMORY_TAG_UNKNOWN) {
-    CRITICAL("Allocate called using MEMORY_TAG_UNKNOWN. Check Tag class!");
+    SLCRITICAL("Allocate called using MEMORY_TAG_UNKNOWN. Check Tag class!");
   }
 
-  stats.totallAllocated += size;
-  stats.taggedAllocations[tag] += size;
+  stats.totall_allocated += size;
+  stats.tagged_allocations[tag] += size;
 
   // TODO: Inplement memory alignment
-  void* block = platformAllocate(size, FALSE);
-  platformZeroMemory(block, size);
+  void* block = platform_allocate(size, FALSE);
+  platform_zero_memory(block, size);
   return block;
 
 }
-void* SLfree(void* block, u64 size, memoryTag tag) {
+void* SLfree(void* block, u64 size, memory_tag tag) {
   if (tag == MEMORY_TAG_UNKNOWN) {
-    WARNING("Free called using MEMORY_TAG_UNKNOWN. Check Tag class!");
+    SLWARNING("Free called using MEMORY_TAG_UNKNOWN. Check Tag class!");
   }
-  stats.totallAllocated -= size;
-  stats.taggedAllocations[tag] -= size;
+  stats.totall_allocated -= size;
+  stats.tagged_allocations[tag] -= size;
 
   // TODO: Implement memory alignmet
-  platformFree(block, FALSE);
+  platform_free(block, FALSE);
   return block;
 }
 void* SLzeroMemory(void* block, u64 size) {
-  return platformZeroMemory(block, size);
+  return platform_zero_memory(block, size);
 }
 void* SLcopyMemory(void* dest, const void* source, u64 size) {
-  return platformCopyMemory(dest, source, size);
+  return platform_copy_memory(dest, source, size);
 }
 void* SLsetMemory(void* dest, s32 value, u64 size){
-  return platformSetMemory(dest, value, size);
+  return platform_set_memory(dest, value, size);
 }
 
-SLAPI std::string getMemoryUsageStr() {
+SLAPI std::string get_memory_usage_str() {
   const u64 kib = 1024;
   const u64 mib = kib * 1024;
   const u64 gib = mib * 1024;
@@ -81,20 +81,20 @@ SLAPI std::string getMemoryUsageStr() {
   string.assign("System memory use (tagged): \n");
 
   for (u32 i = 0; i < MEMORY_TAG_MAX; i++) {
-    if (stats.taggedAllocations[i] >= tib) {
-      string.append(std::format(" {:11} {:>1.2f}{:3}\n", memoryTagStrigns[i], stats.taggedAllocations[i]/(f32)tib, "TiB"));
+    if (stats.tagged_allocations[i] >= tib) {
+      string.append(std::format(" {:11} {:>1.2f}{:3}\n", memory_tag_strigns[i], stats.tagged_allocations[i]/(f32)tib, "TiB"));
     }
-    else if (stats.taggedAllocations[i] >= gib) {
-      string.append(std::format(" {:11} {:>1.2f}{:3}\n", memoryTagStrigns[i], stats.taggedAllocations[i]/(f32)gib, "GiB"));
+    else if (stats.tagged_allocations[i] >= gib) {
+      string.append(std::format(" {:11} {:>1.2f}{:3}\n", memory_tag_strigns[i], stats.tagged_allocations[i]/(f32)gib, "GiB"));
     }
-    else if (stats.taggedAllocations[i] >= mib) {
-      string.append(std::format(" {:11} {:>1.2f}{:3}\n", memoryTagStrigns[i], stats.taggedAllocations[i]/(f32)mib, "MiB"));
+    else if (stats.tagged_allocations[i] >= mib) {
+      string.append(std::format(" {:11} {:>1.2f}{:3}\n", memory_tag_strigns[i], stats.tagged_allocations[i]/(f32)mib, "MiB"));
     }
-    else if (stats.taggedAllocations[i] >= kib) {
-      string.append(std::format(" {:11} {:>1.2f}{:3}\n", memoryTagStrigns[i], stats.taggedAllocations[i]/(f32)kib, "KiB"));
+    else if (stats.tagged_allocations[i] >= kib) {
+      string.append(std::format(" {:11} {:>1.2f}{:3}\n", memory_tag_strigns[i], stats.tagged_allocations[i]/(f32)kib, "KiB"));
     }
     else {
-      string.append(std::format(" {:11} {:>3}{:3}\n", memoryTagStrigns[i], stats.taggedAllocations[i], "B"));
+      string.append(std::format(" {:11} {:>3}{:3}\n", memory_tag_strigns[i], stats.tagged_allocations[i], "B"));
     }
   }
   return string;

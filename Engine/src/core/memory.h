@@ -5,7 +5,7 @@
 #include "logger.h"
 
 
-typedef enum memoryTag {
+typedef enum memory_tag {
   MEMORY_TAG_UNKNOWN,
   MEMORY_TAG_ARRAY,
   MEMORY_TAG_DARRAY,
@@ -26,16 +26,16 @@ typedef enum memoryTag {
   MEMORY_TAG_SCENE,
 
   MEMORY_TAG_MAX,
-} memoryTag;
+} memory_tag;
 
-void memoryInitialize();
-void memoryShutdown();
+void memory_initialize();
+void memory_shutdown();
 
-SLAPI void* SLallocate(u64 size, memoryTag tag);
-SLAPI void* SLfree(void* block, u64 size, memoryTag tag);
+SLAPI void* SLallocate(u64 size, memory_tag tag);
+SLAPI void* SLfree(void* block, u64 size, memory_tag tag);
 SLAPI void* SLzeroMemory(void* block, u64 size);
 SLAPI void* SLcopyMemory(void* dest, const void* source, u64 size);
 SLAPI void* SLsetMemory(void* dest, s32 value, u64 size);
   
-SLAPI std::string getMemoryUsageStr();
+SLAPI std::string get_memory_usage_str();
 

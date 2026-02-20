@@ -1,27 +1,27 @@
 #include "game.h"
 #include <core/logger.h>
 
-b8 gameInitialize(game* gameInstance) {
-  (void)gameInstance;
-  DEBUG("gameInistialize called");
+b8 game_initialize(game* game_instance) {
+  (void)game_instance;
+  SLDEBUG("gameInistialize called");
   return TRUE;
 }
-b8 gameUpdate(game* gameInstance, f64 deltaTime) {
-  (void)gameInstance;
-  (void)deltaTime;
-  DEBUG("gameUpdate called");
+b8 game_update(game* game_instance, f64 delta_time) {
+  (void)game_instance;
+  (void)delta_time;
+  SLDEBUG("game_update called");
   return TRUE;
 }
-b8 gameRender(game* gameInstance, f64 deltaTime) {
-  (void)gameInstance;
-  (void)deltaTime;
-  DEBUG("gameRender called");
+b8 game_render(game* game_instance, f64 delta_time) {
+  (void)game_instance;
+  (void)delta_time;
+  SLDEBUG("game_render called");
   return TRUE;
 }
-void gameOnResize(game* gameInstance, u32 width, u32 height) {
-  (void)gameInstance;
+void game_on_resize(game* game_instance, u32 width, u32 height) {
+  (void)game_instance;
   (void)width;
   (void)height;
-  DEBUG("gameOnResize called");
+  SLDEBUG("game_on_resize called");
 
 }

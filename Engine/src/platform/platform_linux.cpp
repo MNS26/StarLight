@@ -15,42 +15,40 @@
 #include "spdlog/sinks/stdout_color_sinks.h"
 
 
-typedef struct internalState {
+typedef struct internal_state {
   SDL_Window* Window;
 
-} internalState;
+} internal_state;
 
-b8 platformStartup( platformState* platformState, std::string* applicationName, s32 x/*unused*/, s32 y/*unused*/, s32 width, s32 height) {
+b8 platform_startup( platform_state* platform_state, std::string* application_name, s32 x/*unused*/, s32 y/*unused*/, s32 width, s32 height) {
   (void)x;
   (void)y;
 
-  platformState->internalState = malloc(sizeof(internalState));
-  memset(platformState->internalState, 0, sizeof(internalState));
-//  platformState->internalState = platformState->memory.allocate(sizeof(internalState),Memory::MEMORY_TAG_ENGINE);
-//  platformState->memory.memset(platformState->internalState, 0, sizeof(internalState));
-  internalState* state = (internalState*)platformState->internalState;
+  platform_state->internal_state = malloc(sizeof(internal_state));
+  memset(platform_state->internal_state, 0, sizeof(internal_state));
+  internal_state* state = (internal_state*)platform_state->internal_state;
 
   if(!SDL_InitSubSystem(SDL_INIT_VIDEO)) {
-    CRITICAL("Failed to initialize sdl3: {}",SDL_GetError());
+    SLCRITICAL("SDL_INIT_VIDEO Failed: {}",SDL_GetError());
     return FALSE;
   }
 
-  state->Window = SDL_CreateWindow(applicationName->c_str(), width, height, SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE );
+  state->Window = SDL_CreateWindow(application_name->c_str(), width, height, SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE );
 
   if(!state->Window) {
-    CRITICAL("Failed to create window: {}",SDL_GetError());
+    SLCRITICAL("Failed to create window: {}",SDL_GetError());
     return FALSE;
   }
 
   return TRUE;
 }
 
-void platformShutdown(platformState* platformState) {
-  (void) platformState;
+void platform_shutdown(platform_state* platform_state) {
+  (void) platform_state;
 }
 
-b8 platformHandleEvents(platformState* platformState, SDL_Event* event) {
-  internalState* state = (internalState*)platformState->internalState;
+b8 platform_handle_events(platform_state* platform_state, SDL_Event* event) {
+  internal_state* state = (internal_state*)platform_state->internal_state;
   switch (event->type) {
 //      case SDL_DISPLAYEVENT:
 //        SDL_UpdateWindowSurface(_window);
@@ -59,7 +57,7 @@ b8 platformHandleEvents(platformState* platformState, SDL_Event* event) {
     case SDL_EVENT_QUIT:
       SDL_QuitSubSystem(SDL_INIT_VIDEO);
       SDL_DestroyWindow(state->Window);
-      platformState->running = false;
+      platform_state->running = false;
       return FALSE;
 
       //std::cout << "Event: " << SDL_WindowEventToString(event.window) << std::endl;
@@ -111,34 +109,34 @@ b8 platformHandleEvents(platformState* platformState, SDL_Event* event) {
   return FALSE;
 }
 
-void* platformAllocate(u64 size, b8 aligned) {
+void* platform_allocate(u64 size, b8 aligned) {
   (void)aligned;
   return malloc(size);
 }
-void platformFree(void* block, b8 aligned) {
+void platform_free(void* block, b8 aligned) {
   (void)aligned;
   free(block);
 }
-void* platformZeroMemory(void* block, u64 size) {
+void* platform_zero_memory(void* block, u64 size) {
   return memset(block, 0, size);
 }
-void* platformCopyMemory(void* dst, const void* src, u64 size) {
+void* platform_copy_memory(void* dst, const void* src, u64 size) {
   return memcpy(dst, src, size);
 }
-void* platformSetMemory(void* dst, s32 val, u64 size) {
+void* platform_set_memory(void* dst, s32 val, u64 size) {
   return memset(dst, val, size);
 }
 
-f64 platformGetAbsoluteTime() {
+f64 platform_get_absolute_time() {
   struct timespec now;
   clock_gettime(CLOCK_REALTIME,&now);
   return now.tv_sec + now.tv_nsec* 0.000000001;
 }
 
-void platormSleepMs(u64 miliseconds) {
+void platorm_sleep_ms(u64 miliseconds) {
   usleep(1000*miliseconds);
 }
-void platormSleepUs(u64 microseconds) {
+void platorm_sleep_us(u64 microseconds) {
   usleep(microseconds);
 }
 #endif

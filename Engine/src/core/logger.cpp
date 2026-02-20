@@ -5,7 +5,7 @@
 #include "spdlog/sinks/stdout_color_sinks.h"
 
 
-b8 initialize_logger() {
+b8 logger_initialize() {
   // TODO: initialize spdlog
 
 //  spdlog::set_level((spdlog::level::level_enum)((LOG_LEVEL_MAX-2)-sizeof(log_level)));

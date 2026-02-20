@@ -1,4 +1,4 @@
-Project(StarLightEngine VERSION 0.0.0 LANGUAGES C CXX)
+Project(StarLightEngine VERSION 0.0.0 LANGUAGES CXX)
 
 
 ## ======================== ##

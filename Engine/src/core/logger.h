@@ -29,78 +29,78 @@ typedef enum LOG_LEVEL {
 } log_level;
 
 
-b8 initialize_logger();
+b8 logger_initialize();
 void shutdown_logger();
 template <typename... Args>
-void LOG(LOG_LEVEL level, std::format_string<Args...> fmt, Args&&... args);
+void SLLOG(LOG_LEVEL level, std::format_string<Args...> fmt, Args&&... args);
 
 template <typename... Args>
-void CRITICAL(std::format_string<Args...> fmt, Args&&... args);
+void SLCRITICAL(std::format_string<Args...> fmt, Args&&... args);
 
 template <typename... Args>
-void ERROR(std::format_string<Args...> fmt, Args&&... args);
+void SLERROR(std::format_string<Args...> fmt, Args&&... args);
 
 template <typename... Args>
-void WARNING(std::format_string<Args...> fmt, Args&&... args);
+void SLWARNING(std::format_string<Args...> fmt, Args&&... args);
 
 template <typename... Args>
-void INFO(std::format_string<Args...> fmt, Args&&... args);
+void SLINFO(std::format_string<Args...> fmt, Args&&... args);
 
 template <typename... Args>
-void USER(std::format_string<Args...> fmt, Args&&... args);
+void SLUSER(std::format_string<Args...> fmt, Args&&... args);
 
 template <typename... Args>
-void DEBUG(std::format_string<Args...> fmt, Args&&... args);
+void SLDEBUG(std::format_string<Args...> fmt, Args&&... args);
 
 template <typename... Args>
-void TRACE(std::format_string<Args...> fmt, Args&&... args);
+void SLTRACE(std::format_string<Args...> fmt, Args&&... args);
 
 void log_output(log_level level, std::string message);
 
 template <typename... Args>
-inline void LOG(LOG_LEVEL level, std::format_string<Args...> fmt, Args &&...args) {
+inline void SLLOG(LOG_LEVEL level, std::format_string<Args...> fmt, Args &&...args) {
   std::string message = std::format(fmt, std::forward<Args>(args)...);
   log_output(level, message);
 }
 
 template <typename... Args>
-inline void CRITICAL(std::format_string<Args...> fmt, Args &&...args) {
+inline void SLCRITICAL(std::format_string<Args...> fmt, Args &&...args) {
   std::string message = std::format(fmt, std::forward<Args>(args)...);
   log_output(LOG_LEVEL_CRITICAL, message);
 }
 
 template <typename... Args>
-inline void ERROR(std::format_string<Args...> fmt, Args &&...args) {
+inline void SLERROR(std::format_string<Args...> fmt, Args &&...args) {
   std::string message = std::format(fmt, std::forward<Args>(args)...);
   log_output(LOG_LEVEL_ERROR, message);
 }
 
 template <typename... Args>
-inline void WARNING(std::format_string<Args...> fmt, Args &&...args) {
+inline void SLWARNING(std::format_string<Args...> fmt, Args &&...args) {
   std::string message = std::format(fmt, std::forward<Args>(args)...);
   log_output(LOG_LEVEL_WARN, message);
 }
 
 template <typename... Args>
-inline void INFO(std::format_string<Args...> fmt, Args &&...args) {
+inline void SLINFO(std::format_string<Args...> fmt, Args &&...args) {
   std::string message = std::format(fmt, std::forward<Args>(args)...);
   log_output(LOG_LEVEL_INFO, message);
 }
 
 template <typename... Args>
-inline void USER(std::format_string<Args...> fmt, Args &&...args) {
+inline void SLUSER(std::format_string<Args...> fmt, Args &&...args) {
   std::string message = std::format(fmt, std::forward<Args>(args)...);
   log_output(LOG_LEVEL_USER, message);
 }
 
 template <typename... Args>
-inline void DEBUG(std::format_string<Args...> fmt, Args &&...args) {
+inline void SLDEBUG(std::format_string<Args...> fmt, Args &&...args) {
   std::string message = std::format(fmt, std::forward<Args>(args)...);
   log_output(LOG_LEVEL_DEBUG, message);
 }
 
 template <typename... Args>
-inline void TRACE(std::format_string<Args...> fmt, Args &&...args) {
+inline void SLTRACE(std::format_string<Args...> fmt, Args &&...args) {
   std::string message = std::format(fmt, std::forward<Args>(args)...);
   log_output(LOG_LEVEL_TRACE, message);
 }

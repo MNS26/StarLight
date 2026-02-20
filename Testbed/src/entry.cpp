@@ -3,16 +3,16 @@
 
 #include <core/memory.h>
 //extern Memory memory;
-b8 createGame(game* game) {  
-  game->config.startPosX = -1;
-  game->config.startPosY = -1;
-  game->config.startWidth = 1000;
-  game->config.startHeight = 625;
+b8 create_game(game* game) {  
+  game->config.start_pos_x = -1;
+  game->config.start_pos_y = -1;
+  game->config.start_width = 1000;
+  game->config.start_height = 625;
   game->config.name = "StarLight Testbed";
-  game->initialize = gameInitialize;
-  game->update = gameUpdate;
-  game->render = gameRender;
-  game->onResize = gameOnResize;
-  game->state = SLallocate(sizeof(gameState), MEMORY_TAG_GAME);
+  game->initialize = game_initialize;
+  game->update = game_update;
+  game->render = game_render;
+  game->onResize = game_on_resize;
+  game->state = SLallocate(sizeof(game_state), MEMORY_TAG_GAME);
   return TRUE;
 }

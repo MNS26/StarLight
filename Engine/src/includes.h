@@ -26,4 +26,6 @@
 #include <cstdio>
 #include <format>
 #include <string>
+#include <vector>
+#include <algorithm>
 #endif

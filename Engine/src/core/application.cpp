@@ -1,105 +1,128 @@
 
 #include "application.h"
 #include "asserts.h"
-#include "gameTypes.h"
+#include "game_types.h"
 #include "logger.h"
 #include "memory.h"
+#include "event.h"
 
 #include "platform/platform.h"
 
 #include <SDL3/SDL.h>
 
 typedef struct applicationState {
-  game* gameInstance;
-  b8 isRunning;
-  b8 isSuspended;
-  platformState platform;
+  game* game_instance;
+  b8 is_running;
+  b8 is_suspended;
+  platform_state platform;
   s32 width;
   s32 height;
-  f64 firstTime;
+  f64 first_time;
 } applicationState;
 
 static b8 initialized = FALSE;
-static applicationState appState;
+static applicationState app_state;
 
-b8 applicationCreate(game* gameInstance) {
+b8 application_create(game* game_instance) {
 
   if (initialized) {
-    ERROR("applicationCreate called more than once.");
+    SLERROR("application_create called more than once.");
     return FALSE;
   }
 
-  appState.gameInstance = gameInstance;
+  app_state.game_instance = game_instance;
 
-  CRITICAL("TEST {}", 0.1);
-  ERROR("TEST {}", 0.12);
-  WARNING("TEST {}", 0.123);
-  INFO("TEST {}", 0.1234);
-  DEBUG("TEST {}", 0.12345);
-  TRACE("TEST {}", 0.123456);
+  SLCRITICAL("TEST {}", 0.1);
+  SLERROR("TEST {}", 0.12);
+  SLWARNING("TEST {}", 0.123);
+  SLINFO("TEST {}", 0.1234);
+  SLDEBUG("TEST {}", 0.12345);
+  SLTRACE("TEST {}", 0.123456);
   
-  platformConsoleWrite(LOG_LEVEL_CRITICAL, "TEST platformConsoleWrite {} {} {}", 01, 2,3);
-  platformConsoleWrite(LOG_LEVEL_ERROR, "TEST platformConsoleWrite {} {} {}", 01, 2,3);
-  platformConsoleWrite(LOG_LEVEL_WARN, "TEST platformConsoleWrite {} {} {}", 01, 2,3);
-  platformConsoleWrite(LOG_LEVEL_INFO, "TEST platformConsoleWrite {} {} {}", 01, 2,3);
-  platformConsoleWrite(LOG_LEVEL_DEBUG, "TEST platformConsoleWrite {} {} {}", 01, 2,3);
-  platformConsoleWrite(LOG_LEVEL_TRACE, "TEST platformConsoleWrite {} {} {}", 01, 2,3);
+  platform_console_write(LOG_LEVEL_CRITICAL, "TEST platform_console_write {} {} {}", 01, 2,3);
+  platform_console_write(LOG_LEVEL_ERROR, "TEST platform_console_write {} {} {}", 01, 2,3);
+  platform_console_write(LOG_LEVEL_WARN, "TEST platform_console_write {} {} {}", 01, 2,3);
+  platform_console_write(LOG_LEVEL_INFO, "TEST platform_console_write {} {} {}", 01, 2,3);
+  platform_console_write(LOG_LEVEL_DEBUG, "TEST platform_console_write {} {} {}", 01, 2,3);
+  platform_console_write(LOG_LEVEL_TRACE, "TEST platform_console_write {} {} {}", 01, 2,3);
 
-  platformConsoleWriteError("TEST platformConsoleWriteError {} {} {}", 01, 2,3);
+  platform_console_write_error("TEST platform_console_write_error {} {} {}", 01, 2,3);
 
-  appState.isRunning = TRUE;
-  appState.isSuspended = FALSE;
-  if (!platformStartup(
-        &appState.platform, 
-        &gameInstance->config.name,
-        gameInstance->config.startPosX,
-        gameInstance->config.startPosY,
-        gameInstance->config.startWidth,
-        gameInstance->config.startHeight)) {
+  app_state.is_running = TRUE;
+  app_state.is_suspended = FALSE;
+
+  if(!event_initialize()) {
+    SLCRITICAL("Event system failed to initialize. Application cannot continue");
+    return FALSE;
+  }
+
+  if (!platform_startup(
+        &app_state.platform, 
+        &game_instance->config.name,
+        game_instance->config.start_pos_x,
+        game_instance->config.start_pos_y,
+        game_instance->config.start_width,
+        game_instance->config.start_height)) {
     return FALSE;
   }
 
   // Initialize the game
-  if (!appState.gameInstance->initialize(appState.gameInstance)) {
-    platformConsoleWrite(LOG_LEVEL_CRITICAL, "Game failed to intialize!");
+  if (!app_state.game_instance->initialize(app_state.game_instance)) {
+    platform_console_write(LOG_LEVEL_CRITICAL, "Game failed to intialize!");
     return FALSE;
   }
 
-  appState.gameInstance->onResize(appState.gameInstance, appState.width, appState.height);
+  app_state.game_instance->onResize(app_state.game_instance, app_state.width, app_state.height);
   initialized = TRUE;
   return TRUE;
 }
 
-b8 applicationRun() {
+b8 test1(void* data) {
+  event_context* ctx = (event_context*)data;
+  SLINFO("test1 {}", ctx->data.c);
+  return FALSE;
+}
+b8 test2(void* data) {
+  event_context* ctx = (event_context*)data;
+  SLINFO("test2 {}", ctx->data.c);
+  return FALSE;
+}
+b8 application_run() {
   SDL_Event event;
   SDL_zero(event);
-  //scuffed but shoud
-  INFO("{}",getMemoryUsageStr());
-  while (appState.isRunning) {
-    while (SDL_PollEvent(&event)) { 
-      // add all the events in here
-      if (!platformHandleEvents(&appState.platform, &event))
-        appState.isRunning = FALSE;
+  register_listener(SYSTEM_EVENT_TEST,test1);
+  register_listener(SYSTEM_EVENT_TEST,test2);
 
-      if (!appState.isSuspended) {
+  //scuffed but shoud
+  SLINFO("{}",get_memory_usage_str());
+  std::string a = "aaaaa";
+  while (app_state.is_running) {
+    while (SDL_PollEvent(&event)) { 
+      emit_event(SYSTEM_EVENT_TEST, (event_context*)a.c_str());
+      // add all the events in here
+      if (!platform_handle_events(&app_state.platform, &event))
+        app_state.is_running = FALSE;
+
+      if (!app_state.is_suspended) {
         // Update call
-        if (!appState.gameInstance->update(appState.gameInstance, (f64)0)) {
-          CRITICAL("Game update failed, exiting!");
-          appState.isRunning = FALSE;
+        if (!app_state.game_instance->update(app_state.game_instance, (f64)0)) {
+          SLCRITICAL("Game update failed, exiting!");
+          app_state.is_running = FALSE;
           break;
         }
         // Render call
-        if (!appState.gameInstance->render(appState.gameInstance, (f64)0)) {
-          CRITICAL("Game render failed, exiting!");
-          appState.isRunning = FALSE;
+        if (!app_state.game_instance->render(app_state.game_instance, (f64)0)) {
+          SLCRITICAL("Game render failed, exiting!");
+          app_state.is_running = FALSE;
           break;
         }
       }
     }
     // TODO: replace with a proper idle loop
-    platormSleepMs(16);
+    platorm_sleep_ms(16);
   }
-  appState.isRunning = FALSE;
-  platformShutdown(&appState.platform);
+  app_state.is_running = FALSE;
+  event_shutdown();
+  platform_shutdown(&app_state.platform);
   return TRUE;
 }
