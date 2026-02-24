@@ -82,19 +82,19 @@ SLAPI std::string get_memory_usage_str() {
 
   for (u32 i = 0; i < MEMORY_TAG_MAX; i++) {
     if (stats.tagged_allocations[i] >= tib) {
-      string.append(std::format(" {:11} {:02.3f}{:3}\n", memory_tag_strigns[i], stats.tagged_allocations[i]/(f32)tib, "TiB"));
+      string.append(std::format(" {:11} {:1.3f}{:3}\n", memory_tag_strigns[i], stats.tagged_allocations[i]/(f32)tib, "TiB"));
     }
     else if (stats.tagged_allocations[i] >= gib) {
-      string.append(std::format(" {:11} {:02.3f}{:3}\n", memory_tag_strigns[i], stats.tagged_allocations[i]/(f32)gib, "GiB"));
+      string.append(std::format(" {:11} {:1.3f}{:3}\n", memory_tag_strigns[i], stats.tagged_allocations[i]/(f32)gib, "GiB"));
     }
     else if (stats.tagged_allocations[i] >= mib) {
-      string.append(std::format(" {:11} {:02.3f}{:3}\n", memory_tag_strigns[i], stats.tagged_allocations[i]/(f32)mib, "MiB"));
+      string.append(std::format(" {:11} {:1.3f}{:3}\n", memory_tag_strigns[i], stats.tagged_allocations[i]/(f32)mib, "MiB"));
     }
     else if (stats.tagged_allocations[i] >= kib) {
-      string.append(std::format(" {:11} {:02.3f}{:3}\n", memory_tag_strigns[i], stats.tagged_allocations[i]/(f32)kib, "KiB"));
+      string.append(std::format(" {:11} {:1.3f}{:3}\n", memory_tag_strigns[i], stats.tagged_allocations[i]/(f32)kib, "KiB"));
     }
     else {
-      string.append(std::format(" {:11} {:02.3f}{:3}\n", memory_tag_strigns[i], stats.tagged_allocations[i]/(f32)1, "B"));
+      string.append(std::format(" {:11} {:4}{:3}\n", memory_tag_strigns[i], stats.tagged_allocations[i], "B"));
     }
   }
   return string;
