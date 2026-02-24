@@ -33,7 +33,7 @@ typedef struct event_context {
 } event_context;
 
 // True if handled
-typedef b8 (*event_callback)(void* data);
+typedef b8 (*event_callback)(void* func);
 
 // creating custom std::vector
 using event_listener_list = DArray<event_callback>;
@@ -61,3 +61,17 @@ SLAPI b8 unregister_listener(u32 Event, event_callback callback);
 /// @param data The event data
 /// @return TRUE if handled, otherwise FALSE
 SLAPI b8 emit_event(u32 Event, event_context* data);
+
+
+
+
+
+#include "SDL3/SDL_events.h"
+
+typedef b8 (*sdl_event_callback)(void*);
+using sdl_event_listener_list = DArray<sdl_event_callback>;
+
+SLAPI b8 sdl_event_initialize();
+SLAPI b8 sdl_event_register(u32 event, sdl_event_callback callback);
+SLAPI b8 sdl_event_push(u32 type, event_context* data1, void* data2 = NULL);
+SLAPI void sdl_custom_event_process(SDL_Event* event);
