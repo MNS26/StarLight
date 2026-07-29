@@ -20,9 +20,9 @@
         all = os.linux.all;
 
 #        # calls _variant and puts output in result/<os>/<file>        
-        _linux = nixpkgs.legacyPackages.x86_64-linux.callPackage ./. {};
-        _windows = nixpkgs.legacyPackages.x86_64-linux.pkgsCross.mingwW64.callPackage ./. {};
-        _arm = nixpkgs.legacyPackages.x86_64-linux.pkgsCross.aarch64-multiplatform.callPackage ./. {};
+        _linux = nixpkgs.legacyPackages.x86_64-linux.callPackage ./starlight.nix {};
+        _windows = nixpkgs.legacyPackages.x86_64-linux.pkgsCross.mingwW64.callPackage ./starlight.nix {};
+        _arm = nixpkgs.legacyPackages.x86_64-linux.pkgsCross.aarch64-multiplatform.callPackage ./starlight.nix {};
       };
     };
   };

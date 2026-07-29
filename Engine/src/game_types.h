@@ -1,21 +1,21 @@
 #pragma once
-#include "defines.h"
+
 #include "core/application.h"
 
+// represents basic game state
 typedef struct game {
-
-  // Game config
   application_config config;
-  
-  // Pointer to game initialization function
-  b8 (*initialize)(struct game* game_instance);
-  // Pointer to gane update function
-  b8 (*update)(struct game* game_instance, f64 delta_time);
-  // Pointer to game render function
-  b8 (*render)(struct game* game_instance, f64 delta_time);
-  // Pointer to game resize function
-  void (*onResize)(struct game* game_instance, u32 width, u32 height);
-  
-  // General game state data
+
+  b8 (*initialize)(struct game* game_inst);
+
+  b8 (*update)(struct game* game_inst, f32 delta_time);
+
+  // Will be called with a consistent interval
+  b8 (*fixed_update)(struct game* game_inst, f32 delta_time);
+
+  b8 (*render)(struct game* game_isnt, f32 delta_time);
+
+  void (*on_resize)(struct game* game_inst, u32 width, u32 height);
+
   void* state;
 } game;

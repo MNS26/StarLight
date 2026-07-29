@@ -4,7 +4,7 @@ SET(CMAKE_FIND_LIBRARY_SUFFIXES "" ".so" ".so.1" ".dll" ".lib")
 find_package(PkgConfig REQUIRED)
 
 add_executable(${PROJECT_NAME})
-file(GLOB_RECURSE EDITOR_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
+file(GLOB_RECURSE EDITOR_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.c")
 target_sources(${PROJECT_NAME} PRIVATE ${EDITOR_SOURCES})
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 target_link_libraries(${PROJECT_NAME} PUBLIC StarLightEngine)
@@ -27,7 +27,7 @@ endif()
 
 
 
-add_dependencies(${PROJECT_NAME} StarLightRuntime)
+#add_dependencies(${PROJECT_NAME} StarLightRuntime)
 set_target_properties(${PROJECT_NAME} PROPERTIES
 #  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/$<CONFIG>/editor
 #  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Output/$<CONFIG>

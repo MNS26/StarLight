@@ -1,77 +1,67 @@
 #pragma once
 
 #include "defines.h"
-#include "includes.h"
-#include "memory.h"
-#include "types/d_array.h"
-
-// List of all system events
-typedef enum system_event_code {
-  SYSTEM_EVENT_QUIT  = 0,
-  SYSTEM_EVENT_RESIZE,
-  SYSTEM_EVENT_TEST,
-
-  SYSTEM_EVENT_MAX
-} system_event_code;
-
-#define MAX_EVENT_SIZE 3
+#define SIZE 2
 typedef struct event_context {
-  // 196 bytes
+  // 128 Bytes
   union {
-    s64 _s64[MAX_EVENT_SIZE];
-    u64 _u64[MAX_EVENT_SIZE];
-    f64 _f64[MAX_EVENT_SIZE];
-    s32 _s32[MAX_EVENT_SIZE*2];
-    u32 _u32[MAX_EVENT_SIZE*2];
-    f32 _f32[MAX_EVENT_SIZE*2];
-    s16 _s16[MAX_EVENT_SIZE*4];
-    u16 _u16[MAX_EVENT_SIZE*4];
-    s8 _s8[MAX_EVENT_SIZE*8];
-    u8 _u8[MAX_EVENT_SIZE*8];
-    char c[MAX_EVENT_SIZE*8];
+    s64 s64[SIZE*1];
+    u64 u64[SIZE*1];
+    f64 f64[SIZE*1];
+
+    s32 s32[SIZE*2];
+    u32 u32[SIZE*2];
+    f32 f32[SIZE*2];
+
+    s16 s16[SIZE*4];
+    u16 u16[SIZE*4];
+
+    s8 s8[SIZE*8];
+    u8 u8[SIZE*8];
+
+    char c[SIZE*8];
   } data;
+  
 } event_context;
 
-// True if handled
-typedef b8 (*event_callback)(void* func);
-
-// creating custom std::vector
-using event_listener_list = DArray<event_callback>;
+// Return true if handled
+typedef b8 (*PFN_on_event)(u32 code, void* sender, void* listener_instance, event_context data);
 
 b8 event_initialize();
 void event_shutdown();
 
 
-/// @brief Register for events from event system
-/// @param Event Event type to listen for
-/// @param listener pointer to instance (Can be set to 0/NULL)
-/// @param callback callback function to register
-/// @return TRUE if successfully registers, otherwise FALSE
-SLAPI b8 register_listener(u32 Event, event_callback callback);
+/// @brief Register events to listen for
+/// @param code The event to listen for
+/// @param listener pointer to the listener instance. Can be 0 or NULL
+/// @param on_event The callback function pointer to run when the event is triggered
+/// @return TRUE if the event sucessfully registered, otherwise FALSE
+SLAPI b8 event_register(u32 code, void* listener, PFN_on_event on_event);
 
-/// @brief Unregister from event system
-/// @param Event Event type to stop listen for
-/// @param callback callback function to ungerister
-/// @return TRUE if successfully registers, otherwise FALSE
-SLAPI b8 unregister_listener(u32 Event, event_callback callback);
+/// @brief Unregister events to listen for
+/// @param code the listener to remove
+/// @param listener pointer to remove
+/// @param on_event the event callback
+/// @return TRUE if it sucessfully removed it, otherwise FALSE
+SLAPI b8 event_unregister(u32 code, void* listener, PFN_on_event on_event);
 
-
-/// @brief Fires event to listeners of the givven EventCode
-/// @param Event Event to fire
-/// @param data The event data
+/// @brief Fire events to listeners for the even code.
+/// @param code The event to fire
+/// @param listener pointer to the sender. Can be 0 or NULL
+/// @param context The event data
 /// @return TRUE if handled, otherwise FALSE
-SLAPI b8 emit_event(u32 Event, event_context* data);
+SLAPI b8 event_fire(u32 code, void* sender, event_context context);
 
 
-
-
-
-#include "SDL3/SDL_events.h"
-
-typedef b8 (*sdl_event_callback)(void*);
-using sdl_event_listener_list = DArray<sdl_event_callback>;
-
-SLAPI b8 sdl_event_initialize();
-SLAPI b8 sdl_event_register(u32 event, sdl_event_callback callback);
-SLAPI b8 sdl_event_push(u32 type, event_context* data1, void* data2 = NULL);
-SLAPI void sdl_custom_event_process(SDL_Event* event);
+typedef enum system_event_code {
+  EVENT_CODE_APPLICATION_QUIT = 1,
+  EVENT_CODE_KEY_PRESSED,
+  EVENT_CODE_KEY_RELEASED,
+  EVENT_CODE_MOUSE_BUTTON_PRESSED,
+  EVENT_CODE_MOUSE_BUTTON_RELEASED,
+  EVENT_CODE_MOUSE_MOVED,
+  EVENT_CODE_MOUSE_WHEEL,
+  EVENT_CODE_WINDOW_MOVED,
+  EVENT_CODE_WINDOW_RESIZED,
+  EVENT_CODE_MAX_EVENT = 255
+} system_event_code;

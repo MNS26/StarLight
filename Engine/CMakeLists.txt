@@ -12,7 +12,7 @@ find_package(PkgConfig REQUIRED)
 set(ONLY_LIBS ON)
 
 #add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Thirdparty/VMA)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/spdlog)
+#add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/spdlog)
 #add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Thirdparty/VkBootstrap)
 
 
@@ -40,7 +40,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${SDL3_INCLUDE_DIRS})
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
-file(GLOB_RECURSE STARLIGHT_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
+file(GLOB_RECURSE STARLIGHT_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.c")
 list(FILTER STARLIGHT_SOURCES EXCLUDE REGEX ".*example.*|.*tests.*")
 target_sources(${PROJECT_NAME} PRIVATE ${STARLIGHT_SOURCES})
 
@@ -57,9 +57,9 @@ if (TARGET Vulkan::Vulkan)
 endif()
 
 # If spdlog::spdlog target exists use it
-if (TARGET spdlog::spdlog)
-  target_link_libraries(${PROJECT_NAME} PUBLIC spdlog::spdlog)
-endif()
+#if (TARGET spdlog::spdlog)
+#  target_link_libraries(${PROJECT_NAME} PUBLIC spdlog::spdlog)
+#endif()
 
 #target_link_libraries(${PROJECT_NAME} PRIVATE GPUOpen::VulkanMemoryAllocator)
 

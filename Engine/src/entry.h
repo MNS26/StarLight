@@ -1,50 +1,43 @@
 #pragma once
 
-#include "defines.h"
 #include "core/application.h"
+#include "core/slmemory.h"
 #include "core/logger.h"
-#include "core/memory.h"
 #include "game_types.h"
-#include "SDL3/SDL_main.h"
 
-//User function
-extern b8 create_game(game* outGame);
+// External function managed by user code
+extern b8 create_game(game* game);
 
-/**
- * Main entry point
- */
-int main(void)  {
+// Main enry point of application
+int main(void) {
+  initialize_memory();
+  initialize_logging();
 
-  logger_initialize();
-
-  memory_initialize();
-  
-  // Get game instance from application
   game game_instance;
-
   if (!create_game(&game_instance)) {
-    SLCRITICAL("Could not create game!");
+    SLFATAL("Could not create game!");
     return -1;
   }
 
-  // Check if pointers arent null
-  if (!game_instance.initialize || !game_instance.update || !game_instance.render || !game_instance.onResize || !game_instance.state ) {
-    SLCRITICAL("The game's function pointers must be assigned!");
+  // Enusre they exist
+  if (!game_instance.update || !game_instance.state || !game_instance.render || !game_instance.on_resize || !game_instance.initialize) {
+    SLFATAL("The game's function pointers must be assigned!");
     return -2;
   }
 
-  // Init
+
+  //init
   if (!application_create(&game_instance)) {
-    SLCRITICAL("Application failed to create!");
+    SLINFO("Application failed to create!");
     return 1;
   }
 
-  // start game loop
-  if(!application_run()) {
-    SLCRITICAL("Application did not shutdown correctly");
+  // begin loop
+  if (!application_run()) {
+    SLINFO("Application did not shut down gracefully");
     return 2;
   }
-
-  memory_shutdown();
+  shutdown_logging();
+  shutdown_memory();
   return 0;
 }

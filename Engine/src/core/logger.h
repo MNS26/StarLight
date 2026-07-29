@@ -1,106 +1,73 @@
 #pragma once
 
 #include "defines.h"
-#include "includes.h"
-#define LOG_CRITICAL_ENABLED 1
-#define LOG_ERROR_ENABLED 1
-#define LOG_WARN_ENABLED 1
-#define LOG_INFO_ENABLED 1
 
-// Enable debug and trace on debug builds
-#ifdef DISABLE_DEBUG
-#define LOG_DEBUG_ENABLED 0
-#define LOG_TRACE_ENABLED 0
-#else
-#define LOG_DEBUG_ENABLED 1
-#define LOG_TRACE_ENABLED 1
+#define LOG_WARN_ENABLED
+#define LOG_INFO_ENABLED
+#define LOG_DEBUG_ENABLED
+#define LOG_TRACE_ENABLED
+
+// Disable debug and lower levels on release builds
+#ifdef SLRELEASE
+#undef LOG_DEBUG_ENABLED
+#undef LOG_TRACE_ENABLED
 #endif
 
-typedef enum LOG_LEVEL {
-  LOG_LEVEL_TRACE,
-  LOG_LEVEL_DEBUG,
-  LOG_LEVEL_USER,
-  LOG_LEVEL_INFO,
-  LOG_LEVEL_WARN,
+typedef enum log_level {
+  LOG_LEVEL_FATAL,
   LOG_LEVEL_ERROR,
-  LOG_LEVEL_CRITICAL,
-
-  LOG_LEVEL_MAX
+#ifdef LOG_WARN_ENABLED
+  LOG_LEVEL_WARN,
+#endif
+#ifdef LOG_INFO_ENABLED
+  LOG_LEVEL_INFO,
+#endif
+#ifdef LOG_DEBUG_ENABLED
+  LOG_LEVEL_DEBUG,
+#endif
+#ifdef LOG_TRACE_ENABLED
+  LOG_LEVEL_TRACE,
+#endif
+  LOG_LEVEL_MAX,
 } log_level;
 
+b8 initialize_logging();
+void shutdown_logging();
 
-b8 logger_initialize();
-void shutdown_logger();
-template <typename... Args>
-void SLLOG(LOG_LEVEL level, std::format_string<Args...> fmt, Args&&... args);
+SLAPI void log_output(log_level level, const char* message, ...);
 
-template <typename... Args>
-void SLCRITICAL(std::format_string<Args...> fmt, Args&&... args);
+// Logs a fatal message
+#define SLFATAL(message, ...) log_output(LOG_LEVEL_FATAL, message, ##__VA_ARGS__);
 
-template <typename... Args>
-void SLERROR(std::format_string<Args...> fmt, Args&&... args);
+#ifndef SLERROR
+// Logs a error message
+#define SLERROR(message, ...) log_output(LOG_LEVEL_ERROR, message, ##__VA_ARGS__);
+#endif
 
-template <typename... Args>
-void SLWARNING(std::format_string<Args...> fmt, Args&&... args);
+#ifdef LOG_WARN_ENABLED
+// Logs a warn message
+#define SLWARN(message, ...) log_output(LOG_LEVEL_WARN, message, ##__VA_ARGS__);
+#else
+#define SLWARN(message, ...)
+#endif
 
-template <typename... Args>
-void SLINFO(std::format_string<Args...> fmt, Args&&... args);
+#ifdef LOG_INFO_ENABLED
+// Logs a info message
+#define SLINFO(message, ...) log_output(LOG_LEVEL_INFO, message, ##__VA_ARGS__);
+#else
+#define SLINFO(message, ...)
+#endif
 
-template <typename... Args>
-void SLUSER(std::format_string<Args...> fmt, Args&&... args);
+#ifdef LOG_DEBUG_ENABLED
+// Logs a debug message
+#define SLDEBUG(message, ...) log_output(LOG_LEVEL_DEBUG, message, ##__VA_ARGS__);
+#else
+#define SLDEBUG(message, ...)
+#endif
 
-template <typename... Args>
-void SLDEBUG(std::format_string<Args...> fmt, Args&&... args);
-
-template <typename... Args>
-void SLTRACE(std::format_string<Args...> fmt, Args&&... args);
-
-void log_output(log_level level, std::string message);
-
-template <typename... Args>
-inline void SLLOG(LOG_LEVEL level, std::format_string<Args...> fmt, Args &&...args) {
-  std::string message = std::format(fmt, std::forward<Args>(args)...);
-  log_output(level, message);
-}
-
-template <typename... Args>
-inline void SLCRITICAL(std::format_string<Args...> fmt, Args &&...args) {
-  std::string message = std::format(fmt, std::forward<Args>(args)...);
-  log_output(LOG_LEVEL_CRITICAL, message);
-}
-
-template <typename... Args>
-inline void SLERROR(std::format_string<Args...> fmt, Args &&...args) {
-  std::string message = std::format(fmt, std::forward<Args>(args)...);
-  log_output(LOG_LEVEL_ERROR, message);
-}
-
-template <typename... Args>
-inline void SLWARNING(std::format_string<Args...> fmt, Args &&...args) {
-  std::string message = std::format(fmt, std::forward<Args>(args)...);
-  log_output(LOG_LEVEL_WARN, message);
-}
-
-template <typename... Args>
-inline void SLINFO(std::format_string<Args...> fmt, Args &&...args) {
-  std::string message = std::format(fmt, std::forward<Args>(args)...);
-  log_output(LOG_LEVEL_INFO, message);
-}
-
-template <typename... Args>
-inline void SLUSER(std::format_string<Args...> fmt, Args &&...args) {
-  std::string message = std::format(fmt, std::forward<Args>(args)...);
-  log_output(LOG_LEVEL_USER, message);
-}
-
-template <typename... Args>
-inline void SLDEBUG(std::format_string<Args...> fmt, Args &&...args) {
-  std::string message = std::format(fmt, std::forward<Args>(args)...);
-  log_output(LOG_LEVEL_DEBUG, message);
-}
-
-template <typename... Args>
-inline void SLTRACE(std::format_string<Args...> fmt, Args &&...args) {
-  std::string message = std::format(fmt, std::forward<Args>(args)...);
-  log_output(LOG_LEVEL_TRACE, message);
-}
+#ifdef LOG_TRACE_ENABLED
+// Logs a trace message
+#define SLTRACE(message, ...) log_output(LOG_LEVEL_TRACE, message, ##__VA_ARGS__);
+#else
+#define SLTRACE(message, ...)
+#endif
