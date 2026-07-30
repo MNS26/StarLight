@@ -52,6 +52,9 @@ SLAPI b8 event_unregister(u32 code, void* listener, PFN_on_event on_event);
 /// @return TRUE if handled, otherwise FALSE
 SLAPI b8 event_fire(u32 code, void* sender, event_context context);
 
+/// @brief Process all pending custom events from SDL's event queue.
+void event_process_queue();
+
 
 typedef enum system_event_code {
   EVENT_CODE_APPLICATION_QUIT = 1,

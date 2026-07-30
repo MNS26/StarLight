@@ -83,15 +83,15 @@ void input_process_mouse_move(s16 x, s16 y) {
 
     //Fire event
     event_context context;
-    context.data.u16[0]=x;
-    context.data.u16[1]=y;
+    context.data.s16[0]=x;
+    context.data.s16[1]=y;
     event_fire(EVENT_CODE_MOUSE_MOVED, 0, context);
   }
 }
 
 void input_process_mouse_wheel(s8 z_delta) {
   event_context context;
-  context.data.u8[0] = z_delta;
+  context.data.s8[0] = z_delta;
   event_fire(EVENT_CODE_MOUSE_WHEEL, 0, context);
 }
 

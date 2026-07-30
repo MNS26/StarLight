@@ -27,6 +27,7 @@ static application_state app_state;
 // Event handlers
 b8 application_on_event(u32 code, void* sender, void* listener_instance, event_context context);
 b8 application_on_key(u32 code, void* sender, void* listener_instance, event_context context);
+b8 application_on_mouse(u32 code, void* sender, void* listener_instance, event_context context);
 
 
 b8 application_create(game* game_instance) {
@@ -38,13 +39,6 @@ b8 application_create(game* game_instance) {
 
   input_initialize();
 
-  SLFATAL("TEST %f", 0.1);
-  SLERROR("TEST %f", 0.12);
-  SLWARN("TEST %f", 0.123);
-  SLINFO("TEST %f", 0.1234);
-  SLDEBUG("TEST %f", 0.12345);
-  SLTRACE("TEST %f", 0.123456);
-  
   app_state.is_running = TRUE;
   app_state.is_suspended = FALSE;
 
@@ -56,6 +50,10 @@ b8 application_create(game* game_instance) {
   event_register(EVENT_CODE_APPLICATION_QUIT, 0, application_on_event);
   event_register(EVENT_CODE_KEY_PRESSED, 0, application_on_key);
   event_register(EVENT_CODE_KEY_RELEASED, 0, application_on_key);
+  event_register(EVENT_CODE_MOUSE_BUTTON_PRESSED, 0, application_on_mouse);
+  event_register(EVENT_CODE_MOUSE_BUTTON_RELEASED, 0, application_on_mouse);
+  event_register(EVENT_CODE_MOUSE_WHEEL, 0, application_on_mouse);
+  event_register(EVENT_CODE_MOUSE_MOVED, 0, application_on_mouse);
 
   if (!platform_startup(
                         &app_state.platform_state,
@@ -87,6 +85,8 @@ b8 application_run() {
       app_state.is_running = FALSE;
     }
 
+    event_process_queue();
+
     if (!app_state.is_suspended) {
   
       // Call game update routine
@@ -103,7 +103,7 @@ b8 application_run() {
         break;
       }
 
-      // Call input subsystem
+      // update input subsystem state
       input_update(0);
     }
   }
@@ -111,6 +111,11 @@ b8 application_run() {
   event_unregister(EVENT_CODE_APPLICATION_QUIT, 0, application_on_event);
   event_unregister(EVENT_CODE_KEY_PRESSED, 0, application_on_key);
   event_unregister(EVENT_CODE_KEY_RELEASED, 0, application_on_key);
+  event_unregister(EVENT_CODE_MOUSE_BUTTON_PRESSED, 0, application_on_mouse);
+  event_unregister(EVENT_CODE_MOUSE_BUTTON_RELEASED, 0, application_on_mouse);
+  event_unregister(EVENT_CODE_MOUSE_WHEEL, 0, application_on_mouse);
+  event_unregister(EVENT_CODE_MOUSE_MOVED, 0, application_on_mouse);
+
   event_shutdown();
   input_shutdown();
   platform_shutdown(&app_state.platform_state);
@@ -157,6 +162,43 @@ b8 application_on_key(u32 code, void* sender, void* listener_instance, event_con
       SLDEBUG("key: %s",key_name);
       return TRUE;
     }
+  }
+  return FALSE;
+}
+
+
+b8 application_on_mouse(u32 code, void* sender, void* listener_instance, event_context context) {
+  if (code == EVENT_CODE_MOUSE_BUTTON_PRESSED) {
+    mouse_buttons button = context.data.u16[0];
+    if (button == BUTTON_LEFT) {
+      SLDEBUG("mouse button: %i",button);
+      return TRUE;
+    } else if (button == BUTTON_MIDDLE) {
+      SLDEBUG("mouse button: %i",button);
+      return TRUE;
+    } else if (button == BUTTON_RIGHT) {
+      SLDEBUG("mouse button: %i",button);
+      return TRUE;
+    } else if (button == BUTTON_X1) {
+      SLDEBUG("mouse button: %i",button);
+      return TRUE;
+    } else if (button == BUTTON_X2) {
+      SLDEBUG("mouse button: %i",button);
+      return TRUE;
+    } else {
+      SLDEBUG("mouse button: %i",button);
+      return TRUE;
+    }
+  } else if (code == EVENT_CODE_MOUSE_MOVED) {
+    s16 x = context.data.s16[0];
+    s16 y = context.data.s16[1];
+    SLDEBUG("mouse position: %i, %i",x,y);
+    return TRUE;
+  } else if (code == EVENT_CODE_MOUSE_WHEEL) {
+    s8 x = context.data.s8[0];
+    SLDEBUG("mouse wheel: %i",x);
+    return TRUE;
+
   }
   return FALSE;
 }

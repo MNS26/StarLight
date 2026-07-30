@@ -46,10 +46,12 @@ void platform_shutdown(platform_state* platform_state) {
 }
 
 b8 platform_pump_messages(platform_state* platform_state) {
-  internal_state *state = (internal_state*)platform_state->internal_state;
   SDL_Event event;
   b8 quit_flagged = FALSE;
-  while(SDL_PollEvent(&event)) {
+
+  SDL_PumpEvents();
+
+  while (SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_EVENT_FIRST, SDL_EVENT_USER - 1) > 0) {
     switch (event.type) {
       case SDL_EVENT_QUIT:
         quit_flagged = TRUE;
