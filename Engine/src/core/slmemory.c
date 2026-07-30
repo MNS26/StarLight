@@ -1,6 +1,7 @@
 #include "slmemory.h"
 
 #include "core/logger.h"
+#include "core/slstring.h"
 #include "platform/platform.h"
 
 #include <string.h>
@@ -104,6 +105,6 @@ char* get_memory_usage_str() {
     } 
     offset += snprintf(buff + offset, 8000, "  %s: %.2f%s\n", memory_tag_strings[tag], amount, unit);
   }
-  char* out = strdup(buff);
+  char* out = string_duplicate(buff);
   return out;
 }
