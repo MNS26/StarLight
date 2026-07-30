@@ -4,7 +4,6 @@
 #include "core/slstring.h"
 #include "platform/platform.h"
 
-#include <string.h>
 #include <stdio.h>
 
 struct memory_stats {
@@ -85,7 +84,7 @@ char* get_memory_usage_str() {
   const u64 kib = 1000;
 
   char buff[8000] = "System memory use (tagged):\n";
-  u64 offset = strlen(buff);
+  u64 offset = string_length(buff);
   for (u32 tag = 0; tag < MEMORY_TAG_MAX_TAGS; tag++) {
     char unit[4] = " iB";
     float amount = 1.0f;

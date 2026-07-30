@@ -76,7 +76,7 @@ void input_process_mouse_button(mouse_buttons button, b8 pressed) {
 void input_process_mouse_move(s16 x, s16 y) {
   //If state changed
   if (state.mouse_current.x != x || state.mouse_current.y != y) {
-    SLDEBUG("Mouse Pos: %i, %i",x,y)
+    //SLDEBUG("Mouse Pos: %i, %i",x,y)
     //Update state
     state.mouse_current.x = x;
     state.mouse_current.y = y;
