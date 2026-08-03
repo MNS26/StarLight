@@ -19,11 +19,12 @@
   slang,
 #  glslang,
   libuuid,
+  buildType ? "Debug",
 }:
 
 let
   programName = "StarLight";
-  BUILD_TYPE = "Debug";
+  BUILD_TYPE = buildType;
 
   WINDOWS = stdenv.targetPlatform.isWindows;
   LINUX = stdenv.targetPlatform.isLinux;
@@ -48,17 +49,18 @@ stdenv.mkDerivation {
   WINDOWS = stdenv.targetPlatform.isWindows;
   LINUX = stdenv.targetPlatform.isLinux;
 
-  buildInputs = [ sdl3 vulkan-headers vulkan-loader ] ++ (lib.optional LINUX libuuid);
+  buildInputs = [ sdl3 vulkan-headers vulkan-loader vulkan-validation-layers ] ++ (lib.optional LINUX libuuid);
   nativeBuildInputs = [ jq cmake ninja pkg-config util-linux ];
 
   preferLocalBuild = true;
   cmakeFlags = CMAKE_FLAGS;
-  NIX_CFLAGS_COMPILE = [ "-g" "-O0" ];
+  NIX_CFLAGS_COMPILE = if buildType == "Release" then [ "-O2" "-DNDEBUG" ] else [ "-g" "-O0" ];
   hardeningDisable = [ "all" ];
   manualPaths = manualPaths;
   PLATFORM=PLATFORM;
 #$($PKG_CONFIG)
   shellHook = ''
+    export VK_LAYER_PATH="${vulkan-validation-layers}/share/vulkan/explicit_layer.d"
     jq -n --arg platform $PLATFORM --arg args "$NIX_CFLAGS_COMPILE" --arg includes "$buildInputs $manualPaths" --arg cc "$(which $CC)" '{ "configurations": [{ "name": $platform, "compilerArgs": $args | split(" "), "includePath": $includes | split(" "), "compilerPath": $cc, "cStandard": "c17", "cppStandard": "c++20" }], "version": 4 }' > .vscode/c_cpp_properties.json
   '';
 }
