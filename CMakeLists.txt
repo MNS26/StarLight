@@ -8,6 +8,8 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|CLang")
   if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Release")
     message(STATUS "CMAKE_BUILD_TYPE is empty! using Release by default")
+  else()
+    message(STATUS "Building with CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
   endif()
 endif()
 

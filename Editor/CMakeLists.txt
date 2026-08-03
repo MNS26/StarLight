@@ -9,8 +9,11 @@ target_link_libraries(${PROJECT_NAME} PUBLIC StarLightEngine)
 # Compiler flags
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|CLang")
   target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic)
-  if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+  if(CMAKE_BUILD_TYPE MATCHES "Debug|RelWithDebug")
     target_compile_options(${PROJECT_NAME} PRIVATE -g -O0)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE -D_DEBUG)
+  else()
+    message(STATUS "Building ${PROJECT_NAME} Release version, disabling DEBUG and TRACE debug levels")
   endif()
 endif()
 

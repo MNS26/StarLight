@@ -7,6 +7,10 @@
 #include "core/slmemory.h"
 #include "core/event.h"
 #include "core/input.h"
+#include "core/clock.h"
+
+#include "renderer/renderer_frontend.h"
+
 
 #include <SDL3/SDL_keyboard.h>
 #include <SDL3/SDL_scancode.h>
@@ -18,6 +22,7 @@ typedef struct application_state {
   platform_state platform_state;
   s16 width;
   s16 height;
+  clock clock;
   f64 last_time;
 } application_state;
 
@@ -36,6 +41,9 @@ b8 application_create(game* game_instance) {
     return FALSE;
   }
   app_state.game_instance = game_instance;
+
+  app_state.width = game_instance->config.start_width;
+  app_state.height = game_instance->config.start_height;
 
   input_initialize();
 
@@ -66,6 +74,12 @@ b8 application_create(game* game_instance) {
     return FALSE;
   }
 
+  // Renderer startup
+  if (!renderer_initialize(game_instance->config.name, &app_state.platform_state)) {
+    SLFATAL("Failed to initialize renderer! aborting application");
+    return FALSE;
+  }
+
   //Initialize the game
   if (!app_state.game_instance->initialize(app_state.game_instance)) {
     SLFATAL("Unable to initialize game!");
@@ -79,7 +93,16 @@ b8 application_create(game* game_instance) {
 }
 
 b8 application_run() {
+  clock_start(&app_state.clock);
+  clock_update(&app_state.clock);
+  app_state.last_time = app_state.clock.elapsed;
+  f64 running_time = 0;
+  u8 frame_count = 0;
+  f64 target_frame_count = 1.0f/60;
+
+
   SLINFO(get_memory_usage_str());
+
   while (app_state.is_running) {
     if(!platform_pump_messages(&app_state.platform_state)) {
       app_state.is_running = FALSE;
@@ -88,23 +111,52 @@ b8 application_run() {
     event_process_queue();
 
     if (!app_state.is_suspended) {
-  
+      // Update clock and delta time
+      clock_update(&app_state.clock);
+      f64 current_time = app_state.clock.elapsed;
+      f64 delta = (current_time - app_state.last_time);
+      f64 frame_start_time = platfor_get_absolute_time();
+
       // Call game update routine
-      if (!app_state.game_instance->update(app_state.game_instance,(f32)0)) {
+      if (!app_state.game_instance->update(app_state.game_instance,(f32)delta)) {
         SLFATAL("Game update failed, Shutting down.");
         app_state.is_running = FALSE;
         break;
       }
 
       // Call game render routine
-      if (!app_state.game_instance->render(app_state.game_instance,(f32)0)) {
+      if (!app_state.game_instance->render(app_state.game_instance,(f32)delta)) {
         SLFATAL("Game render failed, Shutting down.");
         app_state.is_running = FALSE;
         break;
       }
+      
+      // todo. fix this! this is jank
+      render_packet packet;
+      packet.delta_time = delta;
+      renderer_draw_frame(&packet);
 
-      // update input subsystem state
-      input_update(0);
+      // Find out how long the frame took
+      f64 frame_end_time = platfor_get_absolute_time();
+      f64 frame_elapsed_time = frame_end_time - frame_start_time;
+      running_time += frame_elapsed_time;
+      f64 remaining_seconds = target_frame_count - frame_elapsed_time;
+
+      if (remaining_seconds > 0) {
+        u64 remaining_ms = (remaining_seconds + 1000);
+
+        b8 limit_frames = FALSE;
+        if (remaining_ms > 0 && limit_frames)
+          platform_sleep(remaining_ms - 1);
+        
+        frame_count++;
+      }
+
+      // update input  subsystem state
+      input_update(delta);
+
+      // Update last time
+      app_state.last_time = current_time;
     }
   }
   // Shutdown
@@ -118,8 +170,16 @@ b8 application_run() {
 
   event_shutdown();
   input_shutdown();
+
+  renderer_shutdown();
+
   platform_shutdown(&app_state.platform_state);
   return TRUE;
+}
+
+void application_get_framebuffer_size(u32 *width, u32 *height) {
+  *width = app_state.width;
+  *height = app_state.height;
 }
 
 b8 application_on_event(u32 code, void* sender, void* listener_instance, event_context context) {

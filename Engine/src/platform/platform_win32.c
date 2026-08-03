@@ -30,5 +30,4 @@ void platform_console_write_error(const char* message, u8 color) {
   WriteConsoleA(console_handle, message+'\n', (DWORD)length, &number_written, 0);
 
 }
-
 #endif

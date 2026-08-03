@@ -5,22 +5,23 @@
 #include <core/logger.h>
 #include <core/slmemory.h>
 #include <core/input.h>
-#include <SDL3/SDL.h>
-
-//#if defined(SLPLATFORM_LINUX)
-//#if _POSIX_C_SOURCE >= 199309L
-//#include <time.h>
-//#else
-//#include <unistd.h>
-//#endif
-//#endif
+#include <core/slstring.h>
+#include <containers/darray.h>
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
+#include <SDL3/SDL.h>
+
+// For surface creation
+#include <vulkan/vulkan.h>
+#include <SDL3/SDL_vulkan.h>
+#include "renderer/vulkan/vulkan_types.inl"
+
 typedef struct internal_state {
   SDL_Window* Window;
+  VkSurfaceKHR surface;
 } internal_state;
 
 
@@ -114,6 +115,34 @@ f64 platfor_get_absolute_time() {
 
 void platform_sleep(u64 ms) {
   SDL_Delay((u32)ms);
+}
+
+void platform_get_required_extension_names(const char*** names_darray) {
+  // SDL returns the exact instance extensions it needs for the current
+  // video driver (e.g. VK_KHR_xcb_surface / VK_KHR_wayland_surface).
+  u32 sdl_count = 0;
+  const char* const* sdl_names = SDL_Vulkan_GetInstanceExtensions(&sdl_count);
+  for (u32 i = 0; i < sdl_count; ++i) {
+    darray_push(*names_darray, sdl_names[i]);
+  }
+}
+
+// Surface creation
+b8 platform_create_vulkan_surface(
+  struct platform_state* platform_state,
+  struct vulkan_context* context
+) {
+  internal_state* state = (internal_state*)platform_state->internal_state;
+  
+  // Using SDL to make it platform independent
+  // Note: SDL3 returns a bool, not a VkResult
+  if (!SDL_Vulkan_CreateSurface(state->Window, context->instance, context->allocator, &state->surface)) {
+    SLFATAL("Vulkan surface creation failed: %s", SDL_GetError());
+    return FALSE;
+  }
+  context->surface = state->surface;
+  
+  return TRUE;
 }
 
 #endif

@@ -1,5 +1,9 @@
 #pragma once
 
+//#define _DEBUG // so it shows up when writing code
+//#if defined(_DEBUG)
+//#error "DISABLE BEFORE BUILDING DEBUG"
+//#endif
 #define ARRAY_SIZE(array) sizeof(array)/sizeof(array[0])
 
 // Unsigned int types
@@ -115,3 +119,6 @@ STATIC_ASSERT(sizeof(b64) == 8, "Expected b64 to be 8 bytes");
 #define SLAPI
 #endif
 #endif
+
+
+#define SLCLAMP(value, min, max) (value <- min) ? min : (value >= max) ? max : value;

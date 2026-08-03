@@ -14,7 +14,7 @@ typedef struct event_code_entry {
   registered_event* events;
 } event_code_entry;
 
-#define MAX_MESSAGE_CODES SDL_EVENT_LAST
+#define MAX_MESSAGE_CODES SDL_EVENT_LAST - SDL_EVENT_USER
 
 // State structure
 typedef struct event_system_state {
@@ -88,7 +88,7 @@ b8 event_unregister(u32 code, void* listener, PFN_on_event on_event) {
   for (u64 i = 0; i < registered_count; i++) {
     registered_event e = state.registered[code].events[i];
     if (e.listener == listener && e.callback == on_event) {
-      SLDEBUG("Found listener, unregistering.")
+      //SLDEBUG("Found listener, unregistering.")
       registered_event popped_event;
       darray_pop_at(state.registered[code].events, i, &popped_event);
       return TRUE;

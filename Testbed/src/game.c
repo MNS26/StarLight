@@ -32,4 +32,5 @@ void game_on_resize(game* game_inst, u32 width, u32 height) {
   (void) game_inst;
   (void) width;
   (void) height;
+    
 }
