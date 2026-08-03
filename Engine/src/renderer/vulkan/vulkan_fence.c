@@ -12,6 +12,12 @@ void vulkan_fence_create(
   if (out_fence->is_signaled) {
     fence_create_info.flags = VK_FENCE_CREATE_SIGNALED_BIT;
   }
+  VK_CHECK(vkCreateFence(
+    context->device.logical_device,
+    &fence_create_info,
+    context->allocator,
+    &out_fence->handle
+  ));
 }
 
 void vulkan_fence_destroy(vulkan_context* context, vulkan_fence* fence) {

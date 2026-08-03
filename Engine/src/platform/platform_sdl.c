@@ -5,6 +5,7 @@
 #include <core/logger.h>
 #include <core/slmemory.h>
 #include <core/input.h>
+#include <core/event.h>
 #include <core/slstring.h>
 #include <containers/darray.h>
 
@@ -71,12 +72,25 @@ b8 platform_pump_messages(platform_state* platform_state) {
       case SDL_EVENT_MOUSE_WHEEL:
         input_process_mouse_wheel(event.wheel.y);
         break;
-      case SDL_EVENT_WINDOW_RESIZED:
-        break;
       case SDL_EVENT_WINDOW_MINIMIZED:
+        event_fire(EVENT_CODE_WINDOW_MINIMIZED, 0, (event_context){0});
         break;
       case SDL_EVENT_WINDOW_MAXIMIZED:
+        event_fire(EVENT_CODE_WINDOW_MAXIMIZED, 0, (event_context){0});
         break;
+      case SDL_EVENT_WINDOW_RESTORED:
+        event_fire(EVENT_CODE_WINDOW_RESTORED, 0, (event_context){0});
+        break;
+      case SDL_EVENT_WINDOW_RESIZED:
+      {
+        // data1/data2 carry the new size.
+        event_context context;
+        context.data.u16[0] = (u16)event.window.data1;
+        context.data.u16[1] = (u16)event.window.data2;
+        // Directly fire event
+        // Application layer will catch it but not actually "handle" it so others also get it.
+        event_fire(EVENT_CODE_WINDOW_RESIZED, 0, context);
+      } break;
       case SDL_EVENT_WINDOW_MOVED:
         break;
       case SDL_EVENT_WINDOW_CLOSE_REQUESTED:

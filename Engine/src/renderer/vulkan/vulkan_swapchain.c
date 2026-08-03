@@ -53,8 +53,10 @@ b8 vulkan_swapchain_acquire_next_image_index(
     out_image_index
   );
   if (result == VK_ERROR_OUT_OF_DATE_KHR) {
-    // Recreate swapchain now and exit
-    vulkan_swapchain_recreate(context, context->framebuffer_width, context->framebuffer_height, swapchain);
+    // Swapchain is out of date. Trigger a full regeneration on the next
+    // frame so framebuffers and command buffers are rebuilt together with
+    // the swapchain instead of recreating it in isolation here.
+    context->framebuffer_size_generation++;
     return FALSE;
   } else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
     SLFATAL("Failed to acquire swapchain image!");
@@ -82,9 +84,10 @@ void vulkan_swapchain_present(
 
   VkResult result = vkQueuePresentKHR(present_queue, &present_info);
   if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR) {
-    // Swapchain out of date, suboptimal or framebuffer resize occured
-    // Trigger recreation
-    vulkan_swapchain_recreate(context, context->framebuffer_width, context->framebuffer_height, swapchain);
+    // Swapchain out of date, suboptimal or framebuffer resize occured.
+    // Trigger a full regeneration on the next frame so framebuffers and
+    // command buffers are rebuilt together with the swapchain.
+    context->framebuffer_size_generation++;
   } else if (result != VK_SUCCESS) {
     SLFATAL("Failed to present swapchain image!");
   }
@@ -143,6 +146,8 @@ void create(vulkan_context* context, u32 width, u32 height, vulkan_swapchain* sw
   VkExtent2D max = context->device.swapchain_support.capabilities.maxImageExtent;
   swapchain_extent.width = SLCLAMP(swapchain_extent.width, min.width, max.width);
   swapchain_extent.height = SLCLAMP(swapchain_extent.height, min.height, max.height);
+  swapchain->width = swapchain_extent.width;
+  swapchain->height = swapchain_extent.height;
 
   u32 image_count = context->device.swapchain_support.capabilities.minImageCount + 1;
   if (context->device.swapchain_support.capabilities.maxImageCount > 0 && image_count > context->device.swapchain_support.capabilities.maxImageCount) {
@@ -235,6 +240,7 @@ void create(vulkan_context* context, u32 width, u32 height, vulkan_swapchain* sw
 }
 
 void destroy(vulkan_context* context, vulkan_swapchain* swapchain) {
+  vkDeviceWaitIdle(context->device.logical_device);
   vulkan_image_destroy(context, &swapchain->depth_attachment);
 
   // Only destroy the views, not images

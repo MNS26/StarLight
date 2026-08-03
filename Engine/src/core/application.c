@@ -33,7 +33,8 @@ static application_state app_state;
 b8 application_on_event(u32 code, void* sender, void* listener_instance, event_context context);
 b8 application_on_key(u32 code, void* sender, void* listener_instance, event_context context);
 b8 application_on_mouse(u32 code, void* sender, void* listener_instance, event_context context);
-
+b8 application_on_resized(u32 code, void* sender,void* listener_instance, event_context context);
+b8 application_on_window_state(u32 code, void* sender, void* listener_instance, event_context context);
 
 b8 application_create(game* game_instance) {
   if (initialized) {
@@ -62,6 +63,10 @@ b8 application_create(game* game_instance) {
   event_register(EVENT_CODE_MOUSE_BUTTON_RELEASED, 0, application_on_mouse);
   event_register(EVENT_CODE_MOUSE_WHEEL, 0, application_on_mouse);
   event_register(EVENT_CODE_MOUSE_MOVED, 0, application_on_mouse);
+  event_register(EVENT_CODE_WINDOW_RESIZED, 0, application_on_resized);
+  event_register(EVENT_CODE_WINDOW_MINIMIZED, 0, application_on_window_state);
+  event_register(EVENT_CODE_WINDOW_MAXIMIZED, 0, application_on_window_state);
+  event_register(EVENT_CODE_WINDOW_RESTORED, 0, application_on_window_state);
 
   if (!platform_startup(
                         &app_state.platform_state,
@@ -167,6 +172,10 @@ b8 application_run() {
   event_unregister(EVENT_CODE_MOUSE_BUTTON_RELEASED, 0, application_on_mouse);
   event_unregister(EVENT_CODE_MOUSE_WHEEL, 0, application_on_mouse);
   event_unregister(EVENT_CODE_MOUSE_MOVED, 0, application_on_mouse);
+  event_unregister(EVENT_CODE_WINDOW_RESIZED, 0, application_on_resized);
+  event_unregister(EVENT_CODE_WINDOW_MINIMIZED, 0, application_on_window_state);
+  event_unregister(EVENT_CODE_WINDOW_MAXIMIZED, 0, application_on_window_state);
+  event_unregister(EVENT_CODE_WINDOW_RESTORED, 0, application_on_window_state);
 
   event_shutdown();
   input_shutdown();
@@ -252,7 +261,7 @@ b8 application_on_mouse(u32 code, void* sender, void* listener_instance, event_c
   } else if (code == EVENT_CODE_MOUSE_MOVED) {
     s16 x = context.data.s16[0];
     s16 y = context.data.s16[1];
-    SLDEBUG("mouse position: %i, %i",x,y);
+//    SLDEBUG("mouse position: %i, %i",x,y);
     return TRUE;
   } else if (code == EVENT_CODE_MOUSE_WHEEL) {
     s8 x = context.data.s8[0];
@@ -261,4 +270,59 @@ b8 application_on_mouse(u32 code, void* sender, void* listener_instance, event_c
 
   }
   return FALSE;
+}
+
+b8 application_on_resized(u32 code, void *sender, void *listener_instance, event_context context) {
+  if (code == EVENT_CODE_WINDOW_RESIZED) {
+    u16 width = context.data.u16[0];
+    u16 height = context.data.u16[1];
+    SLDEBUG("Event data: %i, %i", width, height);
+
+    // Ignore zero-sized updates (some platforms report 0x0 while minimized).
+    if (width == 0 || height == 0) {
+      return TRUE;
+    }
+
+    // Check if different.
+    // If so trigger resize event.
+    if (width != app_state.width || height != app_state.height) {
+      app_state.width = width;
+      app_state.height = height;
+
+      SLDEBUG("Window resize event: %i, %i", width, height);
+
+      if (app_state.is_suspended) {
+        SLINFO("Window restored, resuming application.");
+        app_state.is_suspended = FALSE;
+      }
+      app_state.game_instance->on_resize(app_state.game_instance, width, height);
+      renderer_on_resize(width, height);
+    }
+  }
+  // Purposefully not handled to allow other listeners to also receive it
+  return FALSE;
+}
+
+b8 application_on_window_state(u32 code, void *sender, void *listener_instance, event_context context) {
+  switch (code) {
+    case EVENT_CODE_WINDOW_MINIMIZED:
+      SLINFO("Window minimized, suspending application.");
+      app_state.is_suspended = TRUE;
+      return TRUE;
+    case EVENT_CODE_WINDOW_MAXIMIZED:
+      SLINFO("Window maximized.");
+      return TRUE;
+    case EVENT_CODE_WINDOW_RESTORED:
+      if (app_state.is_suspended) {
+        SLINFO("Window restored, resuming application.");
+        app_state.is_suspended = FALSE;
+      }
+      // The swapchain was invalidated while minimized, so force a rebuild
+      // even if the window size is unchanged.
+      app_state.game_instance->on_resize(app_state.game_instance, app_state.width, app_state.height);
+      renderer_on_resize(app_state.width, app_state.height);
+      return TRUE;
+    default:
+      return FALSE;
+  }
 }
