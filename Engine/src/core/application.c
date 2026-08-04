@@ -120,7 +120,7 @@ b8 application_run() {
       clock_update(&app_state.clock);
       f64 current_time = app_state.clock.elapsed;
       f64 delta = (current_time - app_state.last_time);
-      f64 frame_start_time = platfor_get_absolute_time();
+      f64 frame_start_time = platform_get_absolute_time();
 
       // Call game update routine
       if (!app_state.game_instance->update(app_state.game_instance,(f32)delta)) {
@@ -142,7 +142,7 @@ b8 application_run() {
       renderer_draw_frame(&packet);
 
       // Find out how long the frame took
-      f64 frame_end_time = platfor_get_absolute_time();
+      f64 frame_end_time = platform_get_absolute_time();
       f64 frame_elapsed_time = frame_end_time - frame_start_time;
       running_time += frame_elapsed_time;
       f64 remaining_seconds = target_frame_count - frame_elapsed_time;
@@ -264,8 +264,9 @@ b8 application_on_mouse(u32 code, void* sender, void* listener_instance, event_c
 //    SLDEBUG("mouse position: %i, %i",x,y);
     return TRUE;
   } else if (code == EVENT_CODE_MOUSE_WHEEL) {
-    s8 x = context.data.s8[0];
-    SLDEBUG("mouse wheel: %i",x);
+    f32 x = context.data.f32[0];
+    f32 y = context.data.f32[1];
+    SLDEBUG("mouse wheel: %.3f.%.3f",x, y);
     return TRUE;
 
   }

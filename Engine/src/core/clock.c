@@ -4,11 +4,11 @@
 
 void clock_update(clock* clock) {
   if (clock->start_time != 0) 
-    clock->elapsed = platfor_get_absolute_time() - clock->start_time;
+    clock->elapsed = platform_get_absolute_time() - clock->start_time;
 }
 
 void clock_start(clock* clock) {
-  clock->start_time = platfor_get_absolute_time();
+  clock->start_time = platform_get_absolute_time();
   clock->elapsed = 0;
 }
 
