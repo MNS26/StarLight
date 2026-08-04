@@ -28,7 +28,7 @@ void vulkan_image_create(
   image_creation_info.extent.width = width;
   image_creation_info.extent.height = height;
   image_creation_info.extent.depth = 1; // TODO: support configurable depth
-  image_creation_info.mipLevels = 4;    // TODO: support mipmapping
+  image_creation_info.mipLevels = 1;    // TODO: support mipmapping NOTE: set to 1 for wayland (was 4)
   image_creation_info.arrayLayers = 1;  // TODO: support numer of layers in image
   image_creation_info.format = format;
   image_creation_info.tiling = tiling;
