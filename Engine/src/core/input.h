@@ -34,4 +34,4 @@ SLAPI void input_get_previous_mouse_position(s32* x, s32* y);
 
 void input_process_mouse_button(mouse_buttons button, b8 pressed);
 void input_process_mouse_move(s16 x, s16 y);
-void input_process_mouse_wheel(s8 z_delta);
+void input_process_mouse_wheel(f32 z_delta_x, f32 z_delta_y);

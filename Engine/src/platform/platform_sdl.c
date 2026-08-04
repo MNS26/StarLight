@@ -70,7 +70,7 @@ b8 platform_pump_messages(platform_state* platform_state) {
         input_process_mouse_move(event.motion.x, event.motion.y);
         break;
       case SDL_EVENT_MOUSE_WHEEL:
-        input_process_mouse_wheel(event.wheel.y);
+        input_process_mouse_wheel(event.wheel.x,event.wheel.y);
         break;
       case SDL_EVENT_WINDOW_MINIMIZED:
         event_fire(EVENT_CODE_WINDOW_MINIMIZED, 0, (event_context){0});
@@ -123,7 +123,7 @@ void* platform_set_memory(void* dest, s32 value, u64 size) {
   return memset(dest, value, size);
 }
 
-f64 platfor_get_absolute_time() {
+f64 platform_get_absolute_time() {
   return (f64)SDL_GetPerformanceCounter() / (f64)SDL_GetPerformanceFrequency();
 }
 

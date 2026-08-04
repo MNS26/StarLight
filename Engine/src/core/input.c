@@ -89,9 +89,10 @@ void input_process_mouse_move(s16 x, s16 y) {
   }
 }
 
-void input_process_mouse_wheel(s8 z_delta) {
+void input_process_mouse_wheel(f32 z_delta_x, f32 z_delta_y) {
   event_context context;
-  context.data.s8[0] = z_delta;
+  context.data.f32[0] = z_delta_x;
+  context.data.f32[1] = z_delta_y;
   event_fire(EVENT_CODE_MOUSE_WHEEL, 0, context);
 }
 
