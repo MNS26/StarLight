@@ -120,5 +120,13 @@ STATIC_ASSERT(sizeof(b64) == 8, "Expected b64 to be 8 bytes");
 #endif
 #endif
 
-
 #define SLCLAMP(value, min, max) (value <- min) ? min : (value >= max) ? max : value;
+
+// Inlining
+#ifdef _MSC_VER
+#define SLINLINE  __forceinline
+#define SLNOINLINE  __declspec(noinline)
+#else
+#define SLINLINE static inline
+#define SLNOINLINE
+#endif
