@@ -1,0 +1,79 @@
+Project(StarLightAssets VERSION 0.0.0)
+
+find_program(GLSLANG_VALIDATOR glslangValidator)
+if (NOT GLSLANG_VALIDATOR)
+  message(WARNING "glslangValidator not found - shaders will not be compiled automatically.")
+endif()
+set(OUTPUT_DIR "${CMAKE_BINARY_DIR}")
+set(ASSETS_OUTPUT_DIR "${OUTPUT_DIR}/assets")
+set(SHADER_OUTPUT_DIR "${OUTPUT_DIR}/shaders")
+
+# Group all shaders together
+file(GLOB_RECURSE SHADER_SOURCES
+    "${CMAKE_CURRENT_SOURCE_DIR}/shaders/*.vert"
+    "${CMAKE_CURRENT_SOURCE_DIR}/shaders/*.frag"
+    "${CMAKE_CURRENT_SOURCE_DIR}/shaders/*.comp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/shaders/*.geom"
+    "${CMAKE_CURRENT_SOURCE_DIR}/shaders/*.tesc"
+    "${CMAKE_CURRENT_SOURCE_DIR}/shaders/*.tese"
+)
+
+# Generate SPIR-V for each shader
+set(COMPILED_SHADERS)
+
+foreach(SHADER_SRC ${SHADER_SOURCES})
+  get_filename_component(SHADER_NAME ${SHADER_SRC} NAME)
+  get_filename_component(SHADER_EXT ${SHADER_SRC} EXT)
+  string(REPLACE "." "_" SHADER_STEM ${SHADER_NAME})
+  set(SPV_FILE "${SHADER_OUTPUT_DIR}/${SHADER_NAME}.spv")
+
+  # Add custom command for this shader
+  if (GLSLANG_VALIDATOR)
+    add_custom_command(
+      OUTPUT ${SPV_FILE}
+      COMMAND ${CMAKE_COMMAND} -E make_directory "${SHADER_OUTPUT_DIR}"
+      COMMAND ${GLSLANG_VALIDATOR} -V ${SHADER_SRC} -o ${SPV_FILE}
+      DEPENDS ${SHADER_SRC}
+      COMMENT "Compiling shader ${SHADER_NAME} to SPIR-V"
+      VERBATIM
+    )
+  else()
+    # If no compiler, just create a placeholder (so target still exists)
+    add_custom_command(
+      OUTPUT ${SPV_FILE}
+      COMMAND ${CMAKE_COMMAND} -E echo "Warning: glslangValidator missing, ${SHADER_NAME} not compiled."
+      COMMAND ${CMAKE_COMMAND} -E touch ${SPV_FILE}
+      DEPENDS ${SHADER_SRC}
+      COMMENT "glslangValidator not found - skipping ${SHADER_NAME}"
+      VERBATIM
+    )
+  endif()
+
+  list(APPEND COMPILED_SHADERS ${SPV_FILE})
+endforeach()
+
+# Create a single target that builds all shaders
+add_custom_target(StarLightAssets ALL
+    DEPENDS ${COMPILED_SHADERS}
+    COMMENT "Building all assets (shaders, etc.)"
+)
+
+
+# Copy other static assets (textures, models, etc.) to the output folder
+# file(GLOB_RECURSE STATIC_ASSETS
+#     "${CMAKE_CURRENT_SOURCE_DIR}/textures/*"
+#     "${CMAKE_CURRENT_SOURCE_DIR}/models/*"
+# )
+# foreach(ASSET ${STATIC_ASSETS})
+#     file(COPY ${ASSET} DESTINATION "${ASSETS_OUTPUT_DIR}" )
+# endforeach()
+
+# Alternatively, use configure_file for more control, e.g.:
+# configure_file(
+#     "${CMAKE_CURRENT_SOURCE_DIR}/textures/logo.png"
+#     "${ASSETS_OUTPUT_DIR}/textures/logo.png"
+#     COPYONLY
+# )
+
+# Provide a variable so executables can find the assets
+set(STARLIGHT_ASSETS_DIR "${ASSETS_OUTPUT_DIR}" PARENT_SCOPE)
