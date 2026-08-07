@@ -36,9 +36,9 @@ b8 platform_startup(platform_state* platform_state, const char* app_name, s32 x,
 
   if (state->Window == NULL) {
     SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not create window: %s\n", SDL_GetError());
-    return FALSE;
+    return false;
   }
-  return TRUE;
+  return true;
 }
 
 void platform_shutdown(platform_state* platform_state) {
@@ -49,14 +49,14 @@ void platform_shutdown(platform_state* platform_state) {
 
 b8 platform_pump_messages(platform_state* platform_state) {
   SDL_Event event;
-  b8 quit_flagged = FALSE;
+  b8 quit_flagged = false;
 
   SDL_PumpEvents();
 
   while (SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_EVENT_FIRST, SDL_EVENT_USER - 1) > 0) {
     switch (event.type) {
       case SDL_EVENT_QUIT:
-        quit_flagged = TRUE;
+        quit_flagged = true;
         break;
       case SDL_EVENT_KEY_UP:
       case SDL_EVENT_KEY_DOWN:
@@ -94,8 +94,28 @@ b8 platform_pump_messages(platform_state* platform_state) {
       case SDL_EVENT_WINDOW_MOVED:
         break;
       case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
-        quit_flagged = TRUE;
+        quit_flagged = true;
         break;
+
+// 0x600 - 0x64F Gamepad events range
+      case SDL_EVENT_GAMEPAD_AXIS_MOTION: {
+        SLINFO("SDL_EVENT_GAMEPAD_AXIS_MOTION");        
+      }break;
+      case SDL_EVENT_GAMEPAD_BUTTON_DOWN: {
+        SLINFO("SDL_EVENT_GAMEPAD_BUTTON_DOWN");        
+      }break;
+      case SDL_EVENT_GAMEPAD_BUTTON_UP: {
+        SLINFO("SDL_EVENT_GAMEPAD_BUTTON_UP");        
+      }break;
+      case SDL_EVENT_GAMEPAD_ADDED: {
+        SLINFO("SDL_EVENT_GAMEPAD_ADDED");        
+      }break;
+      case SDL_EVENT_GAMEPAD_REMOVED: {
+        SLINFO("SDL_EVENT_GAMEPAD_REMOVED");        
+      }break;
+      case SDL_EVENT_GAMEPAD_REMAPPED: {
+        SLINFO("SDL_EVENT_GAMEPAD_REMAPPED");        
+      }break;
       default:
         continue;
     }
@@ -152,11 +172,11 @@ b8 platform_create_vulkan_surface(
   // Note: SDL3 returns a bool, not a VkResult
   if (!SDL_Vulkan_CreateSurface(state->Window, context->instance, context->allocator, &state->surface)) {
     SLFATAL("Vulkan surface creation failed: %s", SDL_GetError());
-    return FALSE;
+    return false;
   }
   context->surface = state->surface;
   
-  return TRUE;
+  return true;
 }
 
 #endif

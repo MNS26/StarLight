@@ -29,8 +29,8 @@ void vulkan_renderpass_create(
 
 
   // Attachments: TODO: make configurable
-  u32 attachment_description_count = 2;
-  VkAttachmentDescription attachment_descriptions[attachment_description_count];
+  const u32 attachment_description_count = 2;
+  VkAttachmentDescription attachment_descriptions[2];
 
   VkAttachmentDescription color_attachment = {};
   color_attachment.format = context->swapchain.image_format.format; // TODO: make configurable

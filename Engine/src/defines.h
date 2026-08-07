@@ -23,14 +23,14 @@ typedef float f32;
 typedef double f64;
 
 // Boolean types
-typedef char b8;
+typedef _Bool b8;
 typedef short b16;
 typedef int b32;
 typedef long long b64;
 
 // Define static asserts
 #if defined(__clang__) || defined(__gcc__)
-#define STATIC_ASSERT _Static_assert
+#define STATIC_ASSERT _Static_assert   
 #else
 #define STATIC_ASSERT static_assert
 #endif
@@ -55,8 +55,8 @@ STATIC_ASSERT(sizeof(b16) == 2, "Expected b16 to be 2 bytes");
 STATIC_ASSERT(sizeof(b32) == 4, "Expected b32 to be 4 bytes");
 STATIC_ASSERT(sizeof(b64) == 8, "Expected b64 to be 8 bytes");
 
-#define TRUE 1
-#define FALSE 0
+#define true 1
+#define false 0
 
 
 // Platform detection

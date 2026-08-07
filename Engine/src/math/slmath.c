@@ -4,7 +4,7 @@
 #include <math.h>
 #include <stdlib.h>
 
-static b8 rand_seeded = FALSE;
+static b8 rand_seeded = false;
 
 f32 slsin(f32 x) {return sinf(x);}
 
@@ -21,7 +21,7 @@ f32 slabs(f32 x) {return fabsf(x);}
 s32 slrandom() {
     if (!rand_seeded) {
         srand((u32)platform_get_absolute_time());
-        rand_seeded = TRUE;
+        rand_seeded = true;
     }
     return rand();
 }
@@ -29,7 +29,7 @@ s32 slrandom() {
 s32 slrandom_in_range(s32 min, s32 max) {
     if (!rand_seeded) {
         srand((u32)platform_get_absolute_time());
-        rand_seeded = TRUE;
+        rand_seeded = true;
     }
     return (rand() % (max - min + 1)) + min;
 }

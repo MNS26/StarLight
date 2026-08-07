@@ -16,10 +16,10 @@ b8 renderer_initialize(const char* application_name, struct platform_state* plat
   
   if (!backend->initialize(backend, application_name, platform_state)) {
     SLFATAL("Renderer backend failed to initialize! Shutting down.");
-    return FALSE;
+    return false;
   }
 
-  return TRUE;
+  return true;
 }
 
 void renderer_shutdown() {
@@ -47,16 +47,16 @@ b8 renderer_end_frame(f32 delta_time) {
 }
 
 b8 renderer_draw_frame(render_packet* packet) {
-  // If the begin frame returned TRUE, continue
+  // If the begin frame returned true, continue
   if (renderer_begin_frame(packet->delta_time)) {
     // End the frame if this fails. something went VERY wrong in this case.
     b8 result = renderer_end_frame(packet->delta_time);
 
     if (!result) {
       SLERROR("render_end_frame failed. Application shutting down…");
-      return FALSE;
+      return false;
     }
   }
 
-  return TRUE;
+  return true;
 }

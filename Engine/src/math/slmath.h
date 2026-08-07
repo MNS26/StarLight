@@ -76,7 +76,7 @@ SLINLINE f32 vec2_length_squared(vec2 vect)               {return vect.x * vect.
 SLINLINE f32 vec2_length(vec2 vect)                       {return slsqrt(vec2_length_squared(vect));}
 SLINLINE void vec2_normalize(vec2* vect)                  {const f32 length = vec2_length(*vect); vect->x /= length; vect->y /= length;}
 SLINLINE vec2 vec2_normalized(vec2 vect)                  {vec2_normalize(&vect); return vect;}
-SLINLINE b8 vec2_compare(vec2 vect1, vec2 vect2, f32 tol) {return (slabs(vect1.x - vect2.x)>tol) ? FALSE : (slabs(vect1.y - vect2.y)>tol) ? FALSE : TRUE;}
+SLINLINE b8 vec2_compare(vec2 vect1, vec2 vect2, f32 tol) {return (slabs(vect1.x - vect2.x)>tol) ? false : (slabs(vect1.y - vect2.y)>tol) ? false : true;}
 SLINLINE f32 vec2_distance(vec2 vect1, vec2 vect2)        {return vec2_length((vec2){vect1.x - vect2.x, vect1.y-vect2.y});}
 
 
@@ -112,7 +112,7 @@ SLINLINE void vec3_normalize(vec3* vect)                  {const f32 length = ve
 SLINLINE vec3 vec3_normalized(vec3 vect)                  {vec3_normalize(&vect); return vect;}
 SLINLINE f32 vec3_dot(vec3 vect1, vec3 vect2)             {f32 p = 0; p += vect1.x * vect2.x; p += vect1.y * vect2.y; p += vect1.z * vect2.z; return p;}
 SLINLINE vec3 vec3_cross(vec3 vect1, vec3 vect2)          {return (vec3){vect1.y * vect2.z - vect1.z * vect2.y, vect1.z * vect2.x - vect1.x * vect2.z, vect1.x * vect2.y - vect1.y * vect2.x};}
-SLINLINE b8 vec3_compare(vec3 vect1, vec3 vect2, f32 tol) {return (slabs(vect1.x - vect2.x)>tol) ? FALSE : (slabs(vect1.y - vect2.y)>tol) ? FALSE : (slabs(vect1.z - vect2.z)>tol) ? FALSE : TRUE;}
+SLINLINE b8 vec3_compare(vec3 vect1, vec3 vect2, f32 tol) {return (slabs(vect1.x - vect2.x)>tol) ? false : (slabs(vect1.y - vect2.y)>tol) ? false : (slabs(vect1.z - vect2.z)>tol) ? false : true;}
 SLINLINE f32 vec3_distance(vec3 vect1, vec3 vect2)        {return vec3_length((vec3){vect1.x - vect2.x, vect1.y - vect2.y, vect1.z - vect2.z});}
 
 
@@ -157,7 +157,7 @@ SLINLINE void vec4_normalize(vec4* vect)                  {const f32 length = ve
 SLINLINE vec4 vec4_normalized(vec4 vect)                  {vec4_normalize(&vect); return vect;}
 SLINLINE f32 vec4_dot(vec4 vect1, vec4 vect2)             {f32 p = 0; p += vect1.x * vect2.x; p += vect1.y * vect2.y; p += vect1.z * vect2.z; p += vect1.w * vect2.w; return p;}
 SLINLINE vec4 vec4_cross(vec4 vect1, vec4 vect2)          {return (vec4){vect1.y * vect2.z - vect1.z * vect2.y, vect1.z * vect2.x - vect1.x * vect2.z, vect1.x * vect2.y - vect1.y * vect2.x };}
-SLINLINE b8 vec4_compare(vec4 vect1, vec4 vect2, f32 tol) {return (slabs(vect1.x - vect2.x)>tol) ? FALSE : (slabs(vect1.y - vect2.y)>tol) ? FALSE : (slabs(vect1.z - vect2.z)>tol) ? FALSE : (slabs(vect1.w - vect2.w)>tol) ? FALSE : TRUE;}
+SLINLINE b8 vec4_compare(vec4 vect1, vec4 vect2, f32 tol) {return (slabs(vect1.x - vect2.x)>tol) ? false : (slabs(vect1.y - vect2.y)>tol) ? false : (slabs(vect1.z - vect2.z)>tol) ? false : (slabs(vect1.w - vect2.w)>tol) ? false : true;}
 SLINLINE f32 vec4_distance(vec4 vect1, vec4 vect2)        {return vec4_length((vec4){vect1.x - vect2.x, vect1.y - vect2.y, vect1.z - vect2.z, vect1.w - vect2.w});}
 
 SLINLINE f32 vec4_dot_f32(f32 a0, f32 a1, f32 a2, f32 a3,f32 b0, f32 b1, f32 b2, f32 b3) {return (f32)(a0*b0 + a1*b1 + a2*b2 + a3*b3);}

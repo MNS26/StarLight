@@ -12,13 +12,13 @@ b8 renderer_backend_create(renderer_backend_type type, struct platform_state* pl
     out_renderer_backend->end_frame = vulkan_renderer_backend_end_frame;
     out_renderer_backend->resized = vulkan_renderer_backend_on_resized;
 
-    return TRUE;
+    return true;
   } else if (type == RENDERER_BACKEND_TYPE_OPENGL) {
-    return FALSE;
+    return false;
   } else if (type == RENDERER_BACKEND_TYPE_DIRECTX) {
-    return FALSE;
+    return false;
   }
-  return FALSE;
+  return false;
 }
 
 void renderer_backend_destroy(renderer_backend* render_backend) {

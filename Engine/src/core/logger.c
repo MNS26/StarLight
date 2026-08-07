@@ -11,7 +11,7 @@
 const char* log_level_str[LOG_LEVEL_MAX] = {"[FATAL] ","[ERROR] ","[WARN ] ","[INFO ] ","[DEBUG] ","[TRACE] "};
 
 b8 initialize_logging() {
-  return TRUE;
+  return true;
 }
 
 void shutdown_logging() {
@@ -21,8 +21,7 @@ void log_output(log_level level, const char* message, ...) {
   b8 is_error = level < LOG_LEVEL_WARN;
 
   #warning "replace this!"
-  const s32 msg_length = 32000;
-  char message_out[msg_length];
+  char message_out[32000];
   memset(message_out, 0, ARRAY_SIZE(message_out));
 
   __builtin_va_list arg_ptr;
@@ -30,7 +29,7 @@ void log_output(log_level level, const char* message, ...) {
   vsnprintf(message_out, ARRAY_SIZE(message_out), message, arg_ptr);
   va_end(arg_ptr);
 
-  char out[msg_length];
+  char out[32000];
   memset(out, 0, ARRAY_SIZE(out));
 
   snprintf(out, ARRAY_SIZE(out), "%s%s", log_level_str[level], message_out);

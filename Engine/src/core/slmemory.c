@@ -50,7 +50,7 @@ void* slallocate(u64 size, memory_tag tag) {
   stats.tagged_allocations[tag] += size;
 
   // Allocate memory block
-  void* block = platform_allocate(size, FALSE);
+  void* block = platform_allocate(size, false);
   platform_zero_memory(block, size);
   return block;
 }
@@ -63,7 +63,7 @@ void slfree(void* block, u64 size, memory_tag tag) {
   stats.total_allocated -= size;
   stats.tagged_allocations[tag] -= size;
 
-  platform_free(block, FALSE);
+  platform_free(block, false);
 }
 
 void* slzero_memory(void* block, u64 size) {

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "defines.h"
-#define SIZE 2
+#define SIZE 3
 typedef struct event_context {
   // 128 Bytes
   union {
@@ -35,21 +35,21 @@ void event_shutdown();
 /// @param code The event to listen for
 /// @param listener pointer to the listener instance. Can be 0 or NULL
 /// @param on_event The callback function pointer to run when the event is triggered
-/// @return TRUE if the event sucessfully registered, otherwise FALSE
+/// @return true if the event sucessfully registered, otherwise false
 SLAPI b8 event_register(u32 code, void* listener, PFN_on_event on_event);
 
 /// @brief Unregister events to listen for
 /// @param code the listener to remove
 /// @param listener pointer to remove
 /// @param on_event the event callback
-/// @return TRUE if it sucessfully removed it, otherwise FALSE
+/// @return true if it sucessfully removed it, otherwise false
 SLAPI b8 event_unregister(u32 code, void* listener, PFN_on_event on_event);
 
 /// @brief Fire events to listeners for the even code.
 /// @param code The event to fire
 /// @param listener pointer to the sender. Can be 0 or NULL
 /// @param context The event data
-/// @return TRUE if handled, otherwise FALSE
+/// @return true if handled, otherwise false
 SLAPI b8 event_fire(u32 code, void* sender, event_context context);
 
 /// @brief Process all pending custom events from SDL's event queue.
@@ -69,6 +69,6 @@ typedef enum system_event_code {
   EVENT_CODE_WINDOW_MINIMIZED,
   EVENT_CODE_WINDOW_RESTORED,
   EVENT_CODE_WINDOW_MAXIMIZED,
-  
+
   EVENT_CODE_MAX_EVENT = 255
 } system_event_code;

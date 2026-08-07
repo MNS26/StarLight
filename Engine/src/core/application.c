@@ -26,7 +26,7 @@ typedef struct application_state {
   f64 last_time;
 } application_state;
 
-static b8 initialized = FALSE;
+static b8 initialized = false;
 static application_state app_state;
 
 // Event handlers
@@ -39,7 +39,7 @@ b8 application_on_window_state(u32 code, void* sender, void* listener_instance, 
 b8 application_create(game* game_instance) {
   if (initialized) {
     SLERROR("application_create called more than once.");
-    return FALSE;
+    return false;
   }
   app_state.game_instance = game_instance;
 
@@ -48,12 +48,12 @@ b8 application_create(game* game_instance) {
 
   input_initialize();
 
-  app_state.is_running = TRUE;
-  app_state.is_suspended = FALSE;
+  app_state.is_running = true;
+  app_state.is_suspended = false;
 
   if (!event_initialize()) {
     SLERROR("Event system failed to initialize! Application cannot continue.");
-    return FALSE;
+    return false;
   }
 
   event_register(EVENT_CODE_APPLICATION_QUIT, 0, application_on_event);
@@ -76,25 +76,25 @@ b8 application_create(game* game_instance) {
                         game_instance->config.start_width,
                         game_instance->config.start_height
                       )) {
-    return FALSE;
+    return false;
   }
 
   // Renderer startup
   if (!renderer_initialize(game_instance->config.name, &app_state.platform_state)) {
     SLFATAL("Failed to initialize renderer! aborting application");
-    return FALSE;
+    return false;
   }
 
   //Initialize the game
   if (!app_state.game_instance->initialize(app_state.game_instance)) {
     SLFATAL("Unable to initialize game!");
-    return FALSE;
+    return false;
   }
 
   app_state.game_instance->on_resize(app_state.game_instance, app_state.width, app_state.height);
 
-  initialized = TRUE;
-  return TRUE;
+  initialized = true;
+  return true;
 }
 
 b8 application_run() {
@@ -110,7 +110,7 @@ b8 application_run() {
 
   while (app_state.is_running) {
     if(!platform_pump_messages(&app_state.platform_state)) {
-      app_state.is_running = FALSE;
+      app_state.is_running = false;
     }
 
     event_process_queue();
@@ -125,14 +125,14 @@ b8 application_run() {
       // Call game update routine
       if (!app_state.game_instance->update(app_state.game_instance,(f32)delta)) {
         SLFATAL("Game update failed, Shutting down.");
-        app_state.is_running = FALSE;
+        app_state.is_running = false;
         break;
       }
 
       // Call game render routine
       if (!app_state.game_instance->render(app_state.game_instance,(f32)delta)) {
         SLFATAL("Game render failed, Shutting down.");
-        app_state.is_running = FALSE;
+        app_state.is_running = false;
         break;
       }
       
@@ -150,7 +150,7 @@ b8 application_run() {
       if (remaining_seconds > 0) {
         u64 remaining_ms = (remaining_seconds + 1000);
 
-        b8 limit_frames = FALSE;
+        b8 limit_frames = false;
         if (remaining_ms > 0 && limit_frames)
           platform_sleep(remaining_ms - 1);
         
@@ -183,7 +183,7 @@ b8 application_run() {
   renderer_shutdown();
 
   platform_shutdown(&app_state.platform_state);
-  return TRUE;
+  return true;
 }
 
 void application_get_framebuffer_size(u32 *width, u32 *height) {
@@ -195,11 +195,11 @@ b8 application_on_event(u32 code, void* sender, void* listener_instance, event_c
   switch (code) {
     case EVENT_CODE_APPLICATION_QUIT: {
         SLINFO("EVENT_CODE_APPLICATION_QUIT received, shutting down.\n")
-        app_state.is_running = FALSE;
-        return TRUE;
+        app_state.is_running = false;
+        return true;
       };
     default:
-      return FALSE;
+      return false;
   }
 }
 
@@ -211,28 +211,28 @@ b8 application_on_key(u32 code, void* sender, void* listener_instance, event_con
       SLDEBUG("key: %s",key_name);
       event_context data = {};
       event_fire(EVENT_CODE_APPLICATION_QUIT, 0, data);
-      return TRUE;
+      return true;
     } else if (scancode == SDL_SCANCODE_Q) {
       SLDEBUG("key: %s",key_name);
-      return TRUE;
+      return true;
     } else if (scancode == SDL_SCANCODE_W) {
       SLDEBUG("key: %s",key_name);
-      return TRUE;
+      return true;
     } else if (scancode == SDL_SCANCODE_A) {
       SLDEBUG("key: %s",key_name);
-      return TRUE;
+      return true;
     } else if (scancode == SDL_SCANCODE_S) {
       SLDEBUG("key: %s",key_name);
-      return TRUE;
+      return true;
     } else if (scancode == SDL_SCANCODE_D) {      
       SLDEBUG("key: %s",key_name);
-      return TRUE;
+      return true;
     } else {
       SLDEBUG("key: %s",key_name);
-      return TRUE;
+      return true;
     }
   }
-  return FALSE;
+  return false;
 }
 
 
@@ -241,36 +241,36 @@ b8 application_on_mouse(u32 code, void* sender, void* listener_instance, event_c
     mouse_buttons button = context.data.u16[0];
     if (button == BUTTON_LEFT) {
       SLDEBUG("mouse button: %i",button);
-      return TRUE;
+      return true;
     } else if (button == BUTTON_MIDDLE) {
       SLDEBUG("mouse button: %i",button);
-      return TRUE;
+      return true;
     } else if (button == BUTTON_RIGHT) {
       SLDEBUG("mouse button: %i",button);
-      return TRUE;
+      return true;
     } else if (button == BUTTON_X1) {
       SLDEBUG("mouse button: %i",button);
-      return TRUE;
+      return true;
     } else if (button == BUTTON_X2) {
       SLDEBUG("mouse button: %i",button);
-      return TRUE;
+      return true;
     } else {
       SLDEBUG("mouse button: %i",button);
-      return TRUE;
+      return true;
     }
   } else if (code == EVENT_CODE_MOUSE_MOVED) {
     s16 x = context.data.s16[0];
     s16 y = context.data.s16[1];
 //    SLDEBUG("mouse position: %i, %i",x,y);
-    return TRUE;
+    return true;
   } else if (code == EVENT_CODE_MOUSE_WHEEL) {
     f32 x = context.data.f32[0];
     f32 y = context.data.f32[1];
     SLDEBUG("mouse wheel: %.3f.%.3f",x, y);
-    return TRUE;
+    return true;
 
   }
-  return FALSE;
+  return false;
 }
 
 b8 application_on_resized(u32 code, void *sender, void *listener_instance, event_context context) {
@@ -281,7 +281,7 @@ b8 application_on_resized(u32 code, void *sender, void *listener_instance, event
 
     // Ignore zero-sized updates (some platforms report 0x0 while minimized).
     if (width == 0 || height == 0) {
-      return TRUE;
+      return true;
     }
 
     // Check if different.
@@ -294,36 +294,36 @@ b8 application_on_resized(u32 code, void *sender, void *listener_instance, event
 
       if (app_state.is_suspended) {
         SLINFO("Window restored, resuming application.");
-        app_state.is_suspended = FALSE;
+        app_state.is_suspended = false;
       }
       app_state.game_instance->on_resize(app_state.game_instance, width, height);
       renderer_on_resize(width, height);
     }
   }
   // Purposefully not handled to allow other listeners to also receive it
-  return FALSE;
+  return false;
 }
 
 b8 application_on_window_state(u32 code, void *sender, void *listener_instance, event_context context) {
   switch (code) {
     case EVENT_CODE_WINDOW_MINIMIZED:
       SLINFO("Window minimized, suspending application.");
-      app_state.is_suspended = TRUE;
-      return TRUE;
+      app_state.is_suspended = true;
+      return true;
     case EVENT_CODE_WINDOW_MAXIMIZED:
       SLINFO("Window maximized.");
-      return TRUE;
+      return true;
     case EVENT_CODE_WINDOW_RESTORED:
       if (app_state.is_suspended) {
         SLINFO("Window restored, resuming application.");
-        app_state.is_suspended = FALSE;
+        app_state.is_suspended = false;
       }
       // The swapchain was invalidated while minimized, so force a rebuild
       // even if the window size is unchanged.
       app_state.game_instance->on_resize(app_state.game_instance, app_state.width, app_state.height);
       renderer_on_resize(app_state.width, app_state.height);
-      return TRUE;
+      return true;
     default:
-      return FALSE;
+      return false;
   }
 }

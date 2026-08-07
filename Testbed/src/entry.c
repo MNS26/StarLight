@@ -18,5 +18,5 @@ b8 create_game(game* game)  {
   // Create game state
   game->state = slallocate(sizeof(game_state), MEMORY_TAG_GAME);
 
-  return TRUE;
+  return true;
 }
